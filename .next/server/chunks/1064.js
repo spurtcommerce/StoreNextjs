@@ -1,0 +1,1 @@
+"use strict";exports.id=1064,exports.ids=[1064],exports.modules={1064:(a,b,c)=>{c.d(b,{getCartAdapter:()=>e});var d=c(65068);function e(){return(0,d.getAdapterInstance)("cart")}}};

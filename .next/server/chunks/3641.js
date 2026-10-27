@@ -1,0 +1,1 @@
+"use strict";exports.id=3641,exports.ids=[3641],exports.modules={23641:(a,b,c)=>{c.d(b,{getWishlistAdapter:()=>e});var d=c(65068);function e(){return(0,d.getAdapterInstance)("wishlist")}}};

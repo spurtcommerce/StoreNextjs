@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[1364],{81364:(e,s,t)=>{t.d(s,{getAddressAdapter:()=>a});var r=t(358);function a(){return(0,r.getAdapterInstance)("address")}}}]);

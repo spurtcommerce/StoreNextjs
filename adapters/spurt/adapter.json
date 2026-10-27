@@ -1,0 +1,14 @@
+{
+  "name": "spurt",
+  "version": "1.0.0",
+  "displayName": "Spurt Commerce Adapter",
+  "entry": "index.js",
+  "capabilities": {
+    "reviews": true,
+    "relatedProducts": true,
+    "variants": true,
+    "downloads": true,
+    "specifications": true,
+    "banners": true
+  }
+}

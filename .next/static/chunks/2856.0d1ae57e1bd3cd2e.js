@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[2856],{2856:(e,t,u)=>{u.d(t,{getAuthAdapter:()=>n});var a=u(358);function n(){return(0,a.getAdapterInstance)("auth")}}}]);

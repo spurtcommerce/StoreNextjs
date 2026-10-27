@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12" viewBox="0 0 12 12">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_7533" data-name="Rectangle 7533" width="12" height="12" transform="translate(1185 157)" fill="#fff" stroke="#161d25" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group_1375" data-name="Mask Group 1375" transform="translate(-1185 -157)" clip-path="url(#clip-path)">
+    <g id="sliders-vertical-stroke-rounded" transform="translate(1184.384 156.368)">
+      <path id="Path_41481" data-name="Path 41481" d="M2.791,11.114v-3.3" transform="translate(-0.024 -0.081)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41482" data-name="Path 41482" d="M2.791,6.083V2.233" transform="translate(-0.024)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41483" data-name="Path 41483" d="M5.023,4.465h3.3" transform="translate(-0.057 -0.033)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41484" data-name="Path 41484" d="M1.116,7.814h3.3" transform="translate(0 -0.081)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41485" data-name="Path 41485" d="M8.93,6.7h3.3" transform="translate(-0.114 -0.065)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41486" data-name="Path 41486" d="M6.7,4.433v-2.2" transform="translate(-0.081)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41487" data-name="Path 41487" d="M6.7,11.09V6.14" transform="translate(-0.081 -0.057)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41488" data-name="Path 41488" d="M10.6,6.633v-4.4" transform="translate(-0.138)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+      <path id="Path_41489" data-name="Path 41489" d="M10.6,11.122V8.372" transform="translate(-0.138 -0.09)" fill="none" stroke="#161d25" stroke-linecap="round" stroke-width="1"/>
+    </g>
+  </g>
+</svg>

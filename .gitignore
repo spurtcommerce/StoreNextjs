@@ -1,0 +1,29 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# build
+.next/
+public/backup-themes.zip
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env
+.env
+
+# vercel
+.vercel/
+
+# vscode
+.vscode/
+
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+

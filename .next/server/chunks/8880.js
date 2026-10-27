@@ -1,0 +1,1 @@
+"use strict";exports.id=8880,exports.ids=[8880],exports.modules={78880:a=>{a.exports=JSON.parse('{"id":"horizon","themeId":12,"name":"Harvest Horizon","desc":"Fresh produce & agriculture storefront","version":"1.1","thumbnail":"thumbnail.png","preview":"preview.png","style":"style.css"}')}};

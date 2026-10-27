@@ -1,0 +1,1 @@
+"use strict";exports.id=590,exports.ids=[590,5556],exports.modules={5556:(a,b,c)=>{c.r(b),c.d(b,{default:()=>f});var d=c(5735);c(91986);var e=c(7645);let f=()=>(0,d.jsx)(d.Fragment,{children:(0,d.jsx)(e.default,{})})},20590:(a,b,c)=>{c.r(b),c.d(b,{default:()=>d.default});var d=c(5556)}};

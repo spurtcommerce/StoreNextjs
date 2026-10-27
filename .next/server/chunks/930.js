@@ -1,0 +1,1 @@
+"use strict";exports.id=930,exports.ids=[930],exports.modules={90930:a=>{a.exports=JSON.parse('{"id":"default","themeId":11,"name":"Spurtcommerce","desc":"Official Spurtcommerce theme","version":"1.1","thumbnail":"thumbnail.png","preview":"preview.png","style":"style.css"}')}};

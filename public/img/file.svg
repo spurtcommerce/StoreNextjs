@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17" viewBox="0 0 17 17">
+  <defs fill="#000000">
+    <clipPath id="clip-path" fill="#000000">
+      <rect id="Rectangle_7052" data-name="Rectangle 7052" width="17" height="17" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group_775" data-name="Mask Group 775" clip-path="url(#clip-path)">
+    <g id="file-02-stroke-rounded_2_" data-name="file-02-stroke-rounded (2)" transform="translate(2.175 0.593)">
+      <path id="Path_3996" data-name="Path 3996" d="M6.326,13.442h6.326" transform="translate(-3.163 -1.581)" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+      <path id="Path_3997" data-name="Path 3997" d="M6.326,10.279H9.488" transform="translate(-3.163 -1.581)" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+      <path id="Path_3998" data-name="Path 3998" d="M10.279,1.977v.4c0,2.236,0,3.355.695,4.049s1.813.695,4.049.695h.4m.4,1.31V11.07c0,2.982,0,4.473-.926,5.4s-2.417.926-5.4.926-4.473,0-5.4-.926-.926-2.417-.926-5.4V7.477c0-2.566,0-3.849.7-4.718a3.163,3.163,0,0,1,.477-.477c.869-.7,2.152-.7,4.718-.7a3.372,3.372,0,0,1,1.092.09,1.58,1.58,0,0,1,.156.065,3.371,3.371,0,0,1,.836.709L14.888,6.19a3.365,3.365,0,0,1,.806.976A3.365,3.365,0,0,1,15.814,8.426Z" transform="translate(-3.163 -1.581)" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,25 @@
+{
+  "commerce": {
+    "adapter": "",
+    "apiEndpoint": "",
+    "publishableKey": "",
+    "regionId": "",
+    "storeId": "",
+    "salesChannelId": "",
+    "spurtEndpoint": "",
+    "refId": "",
+    "industry": "",
+    "appId": "",
+    "baseUrl": ""
+  },
+  "template": {
+    "active": "default",
+    "themeId": 11,
+    "version": "1.1"
+  },
+  "status": {
+    "live": true,
+    "maintenance": false,
+    "environment": "production"
+  }
+}

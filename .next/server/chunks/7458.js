@@ -1,0 +1,1 @@
+"use strict";exports.id=7458,exports.ids=[7458],exports.modules={7458:(a,b,c)=>{c.d(b,{getAddressAdapter:()=>e});var d=c(65068);function e(){return(0,d.getAdapterInstance)("address")}}};

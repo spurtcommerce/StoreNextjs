@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[1909],{61909:(e,t,s)=>{s.d(t,{getWishlistAdapter:()=>a});var n=s(358);function a(){return(0,n.getAdapterInstance)("wishlist")}}}]);

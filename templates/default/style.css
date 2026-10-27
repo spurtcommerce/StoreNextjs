@@ -1,0 +1,6 @@
+@reference "../../src/app/globals.css";
+
+/* Default Spurtcommerce theme styles */
+:root {
+  --primary-color: #027600;
+}

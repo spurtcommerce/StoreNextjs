@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/test-connection/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"G:\\Git-Access\\StoreNextjs\\src\\app\\api\\test-connection\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

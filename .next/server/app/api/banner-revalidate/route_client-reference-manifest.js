@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/banner-revalidate/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"G:\\Git-Access\\StoreNextjs\\src\\app\\api\\banner-revalidate\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

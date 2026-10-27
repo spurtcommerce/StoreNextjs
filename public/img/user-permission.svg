@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <clipPath id="clip-path">
+      <rect
+        id="Rectangle_7462"
+        data-name="Rectangle 7462"
+        width="24"
+        height="24"
+        transform="translate(24 250)"
+        fill="none"
+        stroke="none"
+      />
+    </clipPath>
+  </defs>
+
+  <g
+    id="Group_17959"
+    data-name="Group 17959"
+    transform="translate(-64 -303)"
+  >
+    <!-- Transparent background -->
+    <rect
+      id="Rectangle_7412"
+      data-name="Rectangle 7412"
+      width="40"
+      height="40"
+      rx="5"
+      transform="translate(64 303)"
+      fill="none"
+    />
+
+    <g
+      id="Mask_Group_1362"
+      data-name="Mask Group 1362"
+      transform="translate(48 61)"
+      clip-path="url(#clip-path)"
+    >
+      <g
+        id="user-settings-01-stroke-rounded_6_"
+        data-name="user-settings-01-stroke-rounded (6)"
+        transform="translate(25.2 251.2)"
+      >
+        <path
+          id="Path_41443"
+          d="M14.834,7.61A5.684,5.684,0,1,0,9.15,13.294,5.684,5.684,0,0,0,14.834,7.61Z"
+          transform="translate(-1.192 -1.926)"
+          fill="none"
+          stroke="#fff"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+
+        <path
+          id="Path_41444"
+          d="M1.926,17.586a7.962,7.962,0,0,1,11.368-7.192"
+          transform="translate(-1.926 1.741)"
+          fill="none"
+          stroke="#fff"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+
+        <path
+          id="Path_41445"
+          d="M15.147,17.787a2.841,2.841,0,0,0,2.468-1.432m-2.468,1.432a2.841,2.841,0,0,1-2.468-1.432m2.468,1.432v1.705m0-7.389a2.841,2.841,0,0,1,2.468,1.432M15.147,12.1a2.841,2.841,0,0,0-2.468,1.432M15.147,12.1V10.4m3.979,2.273-1.511.863m-6.447,3.684,1.511-.863m6.447.863-1.511-.863m-6.447-3.684,1.511.863m4.936,0a2.846,2.846,0,0,1,0,2.821m-4.936,0a2.846,2.846,0,0,1,0-2.821"
+          transform="translate(2.474 2.107)"
+          fill="none"
+          stroke="#fff"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+      </g>
+    </g>
+  </g>
+</svg>

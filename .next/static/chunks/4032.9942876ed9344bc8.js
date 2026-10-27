@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[4032],{94032:(e,t,a)=>{a.d(t,{getCartAdapter:()=>n});var r=a(358);function n(){return(0,r.getAdapterInstance)("cart")}}}]);

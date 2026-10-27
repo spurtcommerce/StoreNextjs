@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_5" data-name="Rectangle 5" width="20" height="20" transform="translate(1330 34)" fill="#fff" stroke="#101317" stroke-width="1.5"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group_3" data-name="Mask Group 3" transform="translate(-1330 -34)" clip-path="url(#clip-path)">
+    <g id="shopping-bag-01-stroke-rounded" transform="translate(1329.125 33.14)">
+      <path id="Path_6" data-name="Path 6" d="M6.977,7.26V5.788a3.99,3.99,0,0,1,4.05-3.927,3.99,3.99,0,0,1,4.05,3.927V7.26" transform="translate(-0.151)" fill="none" stroke="#101317" stroke-width="1.5"/>
+      <path id="Path_7" data-name="Path 7" d="M12.569,6.977H9.182c-3.5,0-4.854.889-5.821,4.264-.872,3.039-1.308,4.559-.852,5.738a3.911,3.911,0,0,0,1.424,1.8c2.348,1.63,11.431,1.7,13.886,0a3.911,3.911,0,0,0,1.424-1.8c.456-1.179.02-2.7-.852-5.738C17.461,8,16.214,6.977,12.569,6.977Z" transform="translate(0 -0.166)" fill="none" stroke="#101317" stroke-width="1.5"/>
+      <path id="Path_8" data-name="Path 8" d="M10.233,10.233h1.8" transform="translate(-0.257 -0.272)" fill="none" stroke="#101317" stroke-linecap="round" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>

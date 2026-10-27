@@ -1,0 +1,1 @@
+"use strict";exports.id=2137,exports.ids=[2137],exports.modules={72137:(a,b,c)=>{c.d(b,{M:()=>f,getProductListAdapter:()=>e});var d=c(65068);function e(){return(0,d.getAdapterInstance)("product")}function f(){return(0,d.getAdapterInstance)("productDetail")}}};

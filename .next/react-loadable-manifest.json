@@ -1,0 +1,320 @@
+{
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 41966,
+    "files": [
+      "static/chunks/1966.f793727fc206da18.js"
+    ]
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 3899,
+    "files": [
+      "static/chunks/3899.f2f2f01573cf27a3.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\ChangePassword\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\Footers\\social-icons.jsx -> react-icons/fa6": {
+    "id": 42021,
+    "files": [
+      "static/chunks/53c13509.cc4f4cabfc7110bb.js",
+      "static/chunks/3220.214bee75e4676ab4.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\ForgotPassword\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\ProductList\\Index.jsx -> react-select": {
+    "id": 92945,
+    "files": [
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/2945.6263a5da0cd6685b.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\Settings\\SettingsSidebar.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": [
+      "static/chunks/9761e08b-62d875fbda3129db.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/1664-e92ecadaa106f2f9.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\SignIn\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\default\\Component\\SignUp\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\horizon\\Component\\ChangePassword\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\horizon\\Component\\Footers\\social-icons.jsx -> react-icons/fa6": {
+    "id": 42021,
+    "files": [
+      "static/chunks/53c13509.cc4f4cabfc7110bb.js",
+      "static/chunks/3220.214bee75e4676ab4.js"
+    ]
+  },
+  "..\\templates\\horizon\\Component\\ForgotPassword\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\horizon\\Component\\SignIn\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "..\\templates\\horizon\\Component\\SignUp\\Index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "GlobalComponents\\Checkout\\CheckoutAddress\\DeliveryAddress\\index.jsx -> react-select": {
+    "id": 92945,
+    "files": [
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/2945.6263a5da0cd6685b.js"
+    ]
+  },
+  "GlobalComponents\\Checkout\\CheckoutAddress\\DeliveryBillingAddress\\AddNewAddress\\index.jsx -> react-select": {
+    "id": 92945,
+    "files": [
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/2945.6263a5da0cd6685b.js"
+    ]
+  },
+  "GlobalComponents\\Checkout\\CheckoutAddress\\index.jsx -> ./DeliveryAddress": {
+    "id": 59318,
+    "files": [
+      "static/chunks/910-101322ceeee3a56a.js",
+      "static/chunks/1785-4807fb6e2d9cf3ff.js",
+      "static/chunks/2834-39185a1b0869c371.js",
+      "static/chunks/4509-656c17bdf9db9618.js",
+      "static/chunks/7982.40619bed759e02bc.js",
+      "static/chunks/447.6e1831ca28ab4689.js",
+      "static/chunks/9318.178da30cbbf91870.js"
+    ]
+  },
+  "GlobalComponents\\Checkout\\CheckoutAddress\\index.jsx -> ./DeliveryBillingAddress": {
+    "id": 86469,
+    "files": [
+      "static/chunks/910-101322ceeee3a56a.js",
+      "static/chunks/1785-4807fb6e2d9cf3ff.js",
+      "static/chunks/2834-39185a1b0869c371.js",
+      "static/chunks/4509-656c17bdf9db9618.js",
+      "static/chunks/7982.40619bed759e02bc.js",
+      "static/chunks/447.6e1831ca28ab4689.js",
+      "static/chunks/6469.670bde13371ec2b4.js"
+    ]
+  },
+  "GlobalComponents\\CustomStarRatting\\StarRating.jsx -> react-star-ratings": {
+    "id": 51412,
+    "files": [
+      "static/chunks/1412.d6d79ec8f9e7b50b.js"
+    ]
+  },
+  "GlobalComponents\\Payment\\index.jsx -> ./Payment": {
+    "id": 50178,
+    "files": [
+      "static/chunks/910-101322ceeee3a56a.js",
+      "static/chunks/1785-4807fb6e2d9cf3ff.js",
+      "static/chunks/2834-39185a1b0869c371.js",
+      "static/chunks/7982.40619bed759e02bc.js",
+      "static/chunks/447.6e1831ca28ab4689.js",
+      "static/chunks/178.7209ffbcb69ea612.js"
+    ]
+  },
+  "GlobalComponents\\RatingReview\\Modal\\AddReviewModal.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "GlobalComponents\\Variants\\VariantsDropdown.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "GlobalComponents\\useCommon\\InformationToolTip.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": [
+      "static/chunks/9761e08b-62d875fbda3129db.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/1664-e92ecadaa106f2f9.js"
+    ]
+  },
+  "GlobalComponents\\useCommon\\pagination.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": []
+  },
+  "GlobalComponents\\useMyAccount\\Address-Book\\create-address-book.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": [
+      "static/chunks/9761e08b-62d875fbda3129db.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/1664-e92ecadaa106f2f9.js"
+    ]
+  },
+  "GlobalComponents\\useMyAccount\\Address-Book\\create-address-book.jsx -> react-select": {
+    "id": 92945,
+    "files": [
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/2945.6263a5da0cd6685b.js"
+    ]
+  },
+  "GlobalComponents\\useMyAccount\\Address-Book\\index.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": [
+      "static/chunks/9761e08b-62d875fbda3129db.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/1664-e92ecadaa106f2f9.js"
+    ]
+  },
+  "GlobalComponents\\useMyAccount\\Address-Book\\skeletonLoader.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": [
+      "static/chunks/9761e08b-62d875fbda3129db.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/1664-e92ecadaa106f2f9.js"
+    ]
+  },
+  "GlobalComponents\\useMyAccount\\Address-Book\\view-all-address.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": [
+      "static/chunks/9761e08b-62d875fbda3129db.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/1664-e92ecadaa106f2f9.js"
+    ]
+  },
+  "GlobalComponents\\useMyOrders\\My-Order\\CancelOrderModal.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/5756.0077066119c21f2b.js"
+    ]
+  },
+  "GlobalComponents\\useMyOrders\\My-Order\\Order-details.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/5756.0077066119c21f2b.js"
+    ]
+  },
+  "GlobalComponents\\useMyOrders\\My-Order\\Order-details.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": []
+  },
+  "GlobalComponents\\useMyOrders\\My-Order\\TrackOrderModal.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/5756.0077066119c21f2b.js"
+    ]
+  },
+  "GlobalComponents\\useMyOrders\\My-Order\\index.jsx -> @material-tailwind/react": {
+    "id": 38502,
+    "files": []
+  },
+  "GlobalComponents\\useProductSearchFunc\\index.jsx -> @headlessui/react": {
+    "id": 45756,
+    "files": [
+      "static/chunks/c16f53c3-91823fac9848ebbe.js",
+      "static/chunks/9538-71a2edd6ef88a6da.js",
+      "static/chunks/5756.0077066119c21f2b.js",
+      "static/chunks/1311-bc5a38693552925a.js"
+    ]
+  },
+  "adapters\\spurt\\index.js -> axios": {
+    "id": 39564,
+    "files": [
+      "static/chunks/9564.4d054570813e5771.js"
+    ]
+  },
+  "api\\interceptor.js -> @/adapters/models/registry/address.adapter": {
+    "id": 81364,
+    "files": [
+      "static/chunks/1364.4f485322e5104597.js"
+    ]
+  },
+  "api\\interceptor.js -> @/adapters/models/registry/auth.adapter": {
+    "id": 2856,
+    "files": [
+      "static/chunks/2856.0d1ae57e1bd3cd2e.js"
+    ]
+  },
+  "api\\interceptor.js -> @/adapters/models/registry/cart.adapter": {
+    "id": 94032,
+    "files": [
+      "static/chunks/4032.9942876ed9344bc8.js"
+    ]
+  },
+  "api\\interceptor.js -> @/adapters/models/registry/product.adapter": {
+    "id": 70955,
+    "files": [
+      "static/chunks/955.f1363f839d1de0c1.js"
+    ]
+  },
+  "api\\interceptor.js -> @/adapters/models/registry/store-adapter.helper": {
+    "id": 72900,
+    "files": [
+      "static/chunks/2900-38fa06c3e9264e73.js"
+    ]
+  },
+  "api\\interceptor.js -> @/adapters/models/registry/wishlist.adapter": {
+    "id": 61909,
+    "files": [
+      "static/chunks/1909.c89b1c42f65b0162.js"
+    ]
+  },
+  "config\\adapter.config.js -> ../adapters/models/registry/adapter.registry.js": {
+    "id": 358,
+    "files": []
+  }
+}
