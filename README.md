@@ -65,6 +65,7 @@ Before downloading and running this project, ensure you have the following insta
 ```bash
 git clone -b main https://github.com/spurtcommerce/StoreNextjs.git
 cd StoreNextjs
+npm install
 ```
 
 ### Step 2: Environment Configuration
