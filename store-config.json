@@ -15,10 +15,10 @@
     }
   },
   "commerce": {
-    "adapter": "",
+    "adapter": "spurt",
     "baseUrl": "",
-    "spurtEndpoint": "",
-    "industry": ""
+    "spurtEndpoint": "https://spurt-api.spurtb2c.store/api",
+    "industry": "Furniture"
   },
   "status": {
     "live": true,
