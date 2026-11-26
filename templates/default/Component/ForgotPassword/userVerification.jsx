@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState, Suspense } from "react";
-import ButtonSpinnerLoader from "@/GlobalComponents/useCommon/ButtonSpinnerLoader";
-import FormInput from "@/GlobalComponents/FormInput";
-import useAccountVerificationFunc from "@/GlobalComponents/useForgotPasswordFunc/useAccountVerificationFunc/Index";
+import ButtonSpinnerLoader from "@/GlobalComponents/Shared/Common/ButtonSpinnerLoader";
+import FormInput from "@/GlobalComponents/Shared/Forms/FormInput";
+import useAccountVerificationFunc from "@/GlobalComponents/Hooks/useAuth/useAccountVerificationFunc/Index";
 import { getDefaultStoreLogo } from "@/utilities/mediaResolver";
 
 function PageLoader() {
@@ -61,19 +61,19 @@ function PageContent() {
 
   return (
     <>
-       {loader ? (
+      {loader ? (
         <PageLoader />
       ) : (
         <div className="flex justify-center items-center min-h-[calc(100vh-9.6rem)]  overflow-hidden">
           <div className="overflow-auto grow max-md:p-4 text-center shadow-xl p-[40px_24px] rounded-xl w-full max-w-md align-middle transition-all transform">
             <div className="flex justify-center mb-6">
               <img
-                src={Logosrc || getDefaultStoreLogo()}
+                src={Logosrc && !Logosrc.includes("/platforms/") ? Logosrc : "/img/spurt-logo.svg"}
                 alt="Logo"
                 className="h-12 max-w-[200px] object-contain"
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null;
-                  currentTarget.src = getDefaultStoreLogo();
+                  currentTarget.src = "/img/spurt-logo.svg";
                 }}
               />
             </div>
@@ -85,9 +85,8 @@ function PageContent() {
             </div>
 
             <form
-              className={`my-10 ${
-                showPasswordChangeForm && !showsuccessMessage ? "" : "hidden"
-              }`}
+              className={`my-10 ${showPasswordChangeForm && !showsuccessMessage ? "" : "hidden"
+                }`}
             >
               <label className="text-[14px] leading-4.75 text-[var(--color-171d26)] font-normal mb-1.25 flex items-center gap-1.25">
                 {t("newPasswordLabel")}
@@ -147,17 +146,15 @@ function PageContent() {
               </button>
             </form>
             <h2
-              className={`text-[var(--color-171d26)] text-[1rem]  mt-4 capitalize ${
-                showPasswordChangeForm ? "hidden" : ""
-              }`}
+              className={`text-[var(--color-171d26)] text-[1rem]  mt-4 capitalize ${showPasswordChangeForm ? "hidden" : ""
+                }`}
             >
               {errorMessages}
             </h2>
 
             <div
-              className={`text-[var(--color-171d26)] text-[1rem] mt-4 capitalize transition-all duration-500 ${
-                showsuccessMessage ? "" : "hidden"
-              }`}
+              className={`text-[var(--color-171d26)] text-[1rem] mt-4 capitalize transition-all duration-500 ${showsuccessMessage ? "" : "hidden"
+                }`}
             >
               {t("passwordChangeSuccess")}
               {showsuccessMessage && (

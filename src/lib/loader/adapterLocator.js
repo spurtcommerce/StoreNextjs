@@ -1,44 +1,53 @@
 import fs from "fs";
 import path from "path";
+import { resolvePathWithinRoot, validateAdapterName } from "./pathSecurity.js";
 
 /**
  * Discovers potential candidate locations for a commerce adapter
  * across development, standalone production (dist/adapters), and custom directories.
+ * Strictly validates adapterName against the allowlist and enforces root containment.
  *
  * @param {string} adapterName - e.g. "medusa", "spurt"
  * @returns {string[]} Ordered list of candidate directories
  */
 export function getAdapterCandidateDirectories(adapterName) {
-  if (!adapterName) return [];
-  const key = adapterName.toLowerCase().trim();
+  const key = validateAdapterName(adapterName);
+  if (!key) return [];
+
   const cwd = process.cwd();
-  const list = [];
+  const rootDirs = [];
 
   // Custom environment path
   if (process.env.COMMERCE_ADAPTERS_DIR) {
-    list.push(path.resolve(process.env.COMMERCE_ADAPTERS_DIR, key));
+    rootDirs.push(process.env.COMMERCE_ADAPTERS_DIR);
   }
   if (process.env.ADAPTERS_DIR) {
-    list.push(path.resolve(process.env.ADAPTERS_DIR, key));
+    rootDirs.push(process.env.ADAPTERS_DIR);
   }
 
-  // 1. Root /adapters directory (manual drop-in)
-  list.push(path.resolve(cwd, "adapters", key));
+  const isDistMode =
+    path.basename(cwd) === "dist" ||
+    fs.existsSync(path.resolve(cwd, "server.js")) ||
+    process.env.STANDALONE === "true";
 
-  // 2. Dist /adapters directory (standalone deployment drop-in)
-  list.push(path.resolve(cwd, "dist", "adapters", key));
-
-  // 3. Built adapter artifact directory
-  list.push(path.resolve(cwd, "dist-adapter", key));
-
-  // 4. Source adapters directory (development)
-  list.push(path.resolve(cwd, "src", "adapters", key));
-
-  // Relative to __dirname in compiled environments
-  if (typeof __dirname !== "undefined") {
-    list.push(path.resolve(__dirname, "../../../adapters", key));
-    list.push(path.resolve(__dirname, "../../../../adapters", key));
+  if (isDistMode) {
+    // In standalone dist mode, external pluggable adapters live strictly in ./adapters (dist/adapters)
+    rootDirs.push(path.resolve(cwd, "adapters"));
+  } else if (process.env.NODE_ENV === "development") {
+    // In local dev mode, prefer root /adapters (manual drop-in) or src/adapters (dev ESM sources)
+    rootDirs.push(path.resolve(cwd, "adapters"));
+    rootDirs.push(path.resolve(cwd, "src", "adapters"));
+  } else {
+    // In next start production mode, check root /adapters, dist/adapters, dist-adapter, or src/adapters
+    rootDirs.push(path.resolve(cwd, "adapters"));
+    rootDirs.push(path.resolve(cwd, "dist", "adapters"));
+    rootDirs.push(path.resolve(cwd, "dist-adapter"));
+    rootDirs.push(path.resolve(cwd, "src", "adapters"));
   }
+
+  const list = rootDirs
+    .map((root) => resolvePathWithinRoot(root, key))
+    .filter(Boolean);
 
   // Deduplicate
   return Array.from(new Set(list));

@@ -10,7 +10,9 @@ const SettingsSkeleton = () => {
             key={index}
             className="flex h-full animate-pulse items-start gap-4 rounded-[5px] border border-solid border-[var(--color-e9e9e9)] bg-[var(--color-white)] p-4 shadow-[0px_1px_2px_#00000015]"
           >
-            <div className="h-10 w-10 min-w-10 rounded-[5px] bg-[var(--color-cbd5e1)]"></div>
+            {/* Circular icon placeholder */}
+            <div className="h-10 w-10 min-w-10 rounded-full bg-[var(--color-cbd5e1)]"></div>
+            {/* Rectangular text placeholders */}
             <div className="flex-1 space-y-2">
               <div className="h-4 w-3/4 rounded bg-[var(--color-cbd5e1)]"></div>
               <div className="h-3 w-full rounded bg-[var(--color-e2e8f0)]"></div>

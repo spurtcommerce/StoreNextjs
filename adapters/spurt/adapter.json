@@ -1,7 +1,10 @@
 {
   "name": "spurt",
   "version": "1.0.0",
-  "displayName": "Spurt Commerce Adapter",
+  "displayName": "Spurtcommerce",
+  "description": "Connect your Spurtcommerce backend, Ref ID and App ID",
+  "logo": "/api/connectors/spurt/logo",
+  "docsUrl": "https://spurtcommerce.com",
   "entry": "index.js",
   "capabilities": {
     "reviews": true,
@@ -9,6 +12,8 @@
     "variants": true,
     "downloads": true,
     "specifications": true,
-    "banners": true
+    "banners": true,
+    "featuredProducts": true,
+    "collections": false
   }
 }

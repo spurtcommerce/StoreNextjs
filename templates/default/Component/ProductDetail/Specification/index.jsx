@@ -174,6 +174,7 @@ const Specification = ({ productSlug, categoryIds = [], productDetail }) => {
       !Array.isArray(productDetail.specifications)
     ) {
       return Object.entries(productDetail.specifications).map(([key, val]) => ({
+        group: "General",
         attributeName: key,
         value: typeof val === "object" ? JSON.stringify(val) : String(val),
       }));
@@ -181,57 +182,101 @@ const Specification = ({ productSlug, categoryIds = [], productDetail }) => {
 
     const raw = productDetail?.productAttributes || productDetail?.attributes;
     if (Array.isArray(raw) && raw.length > 0) {
-      return raw.map((item) => ({
-        attributeName:
-          item?.attributeName ||
-          item?.name ||
-          item?.attribute?.name ||
-          "Specification",
-        value:
-          item?.value ||
-          (Array.isArray(item?.attributeValues)
-            ? item.attributeValues
-                .map((v) => v?.valueTrans || v?.value || "")
-                .filter(Boolean)
-                .join(", ")
-            : "") ||
-          "-",
-      }));
+      const items = [];
+      raw.forEach((item) => {
+        // If it's a group of attributes (e.g. OpenCart / Medusa groups)
+        if (Array.isArray(item?.attributes) && item.attributes.length > 0) {
+          const groupName = item?.name || item?.attributeGroupName || "General";
+          item.attributes.forEach((attr) => {
+            const val =
+              attr?.value ||
+              attr?.text ||
+              (Array.isArray(attr?.attributeValues)
+                ? attr.attributeValues.map((v) => v?.valueTrans || v?.value || "").filter(Boolean).join(", ")
+                : "") ||
+              "";
+            if (val && val !== "-") {
+              items.push({
+                group: groupName,
+                attributeName: attr?.attributeName || attr?.name || "Specification",
+                value: val,
+              });
+            }
+          });
+        } else {
+          // Flat attribute
+          const val =
+            item?.value ||
+            item?.text ||
+            (Array.isArray(item?.attributeValues)
+              ? item.attributeValues.map((v) => v?.valueTrans || v?.value || "").filter(Boolean).join(", ")
+              : "") ||
+            "";
+          if (val && val !== "-") {
+            items.push({
+              group: item?.group || "General",
+              attributeName:
+                item?.attributeName ||
+                item?.name ||
+                item?.attribute?.name ||
+                "Specification",
+              value: val,
+            });
+          }
+        }
+      });
+      return items;
     }
 
     return [];
   }, [productDetail]);
 
-  const hasAdvancedSpecs = specificationValue?.length > 0;
-  const hasSimpleSpecs = productSpecification?.length > 0;
-  const hasDirectSpecs = directAttributes?.length > 0;
-  const hasAnySpecs = hasAdvancedSpecs || hasSimpleSpecs || hasDirectSpecs;
-
   // Flattened simple items for easy search and counting
   const flattenedItems = useMemo(() => {
-    if (hasSimpleSpecs) {
+    if (productSpecification?.length > 0) {
       const list = [];
       productSpecification.forEach((spec) => {
-        const groupName = spec?.specificationName || "General";
-        spec?.attributeGroups?.[0]?.attributes?.forEach((attr) => {
-          list.push({
-            group: groupName,
-            name: attr?.attributeName || "",
-            value: attr?.value || "-",
+        const specName = spec?.specificationName || "";
+        const groups = Array.isArray(spec?.attributeGroups) ? spec.attributeGroups : [];
+        groups.forEach((grp) => {
+          const groupName = grp?.attributeGroupName || grp?.name || specName || "General";
+          grp?.attributes?.forEach((attr) => {
+            const val =
+              attr?.value ||
+              attr?.text ||
+              (Array.isArray(attr?.attributeValues)
+                ? attr.attributeValues.map((v) => v?.valueTrans || v?.value || "").filter(Boolean).join(", ")
+                : "") ||
+              "";
+            if (val && val !== "-") {
+              list.push({
+                group: groupName,
+                name: attr?.attributeName || attr?.name || "",
+                value: val,
+              });
+            }
           });
         });
       });
-      return list;
+      if (list.length > 0) return list;
     }
-    if (hasDirectSpecs) {
+    if (directAttributes?.length > 0) {
       return directAttributes.map((attr) => ({
-        group: "General",
+        group: attr.group || "General",
         name: attr.attributeName,
         value: attr.value,
       }));
     }
     return [];
-  }, [hasSimpleSpecs, hasDirectSpecs, productSpecification, directAttributes]);
+  }, [productSpecification, directAttributes]);
+
+  const hasAdvancedSpecs =
+    Array.isArray(specificationValue) &&
+    specificationValue.length > 0 &&
+    specificationValue.some((sv) => Array.isArray(sv?.specificationValue) && sv.specificationValue.length > 0);
+  const hasSimpleSpecs = flattenedItems.length > 0;
+  const hasDirectSpecs = directAttributes.length > 0;
+  const hasAnySpecs = hasAdvancedSpecs || hasSimpleSpecs || hasDirectSpecs;
 
   const groups = useMemo(() => {
     const set = new Set();
@@ -283,6 +328,9 @@ const Specification = ({ productSlug, categoryIds = [], productDetail }) => {
   };
 
   if (loading) {
+    if (!hasAnySpecs && directAttributes.length === 0) {
+      return null;
+    }
     return (
       <div className="mb-10 animate-pulse">
         <div className="flex items-center gap-3 mb-4">
@@ -301,7 +349,7 @@ const Specification = ({ productSlug, categoryIds = [], productDetail }) => {
     );
   }
 
-  if (!hasAnySpecs) {
+  if (!hasAnySpecs || (!hasAdvancedSpecs && flattenedItems.length === 0)) {
     return null;
   }
 

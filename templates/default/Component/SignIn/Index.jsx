@@ -1,5 +1,5 @@
 "use client";
-import useSigninModalFunc from "@/GlobalComponents/useSigninModalFunc";
+import { useSigninModal } from "@/GlobalComponents/Hooks/useAuth";
 import React, { Fragment } from "react";
 import dynamic from "next/dynamic";
 
@@ -12,9 +12,9 @@ const DialogTitle = loadHeadlessui("DialogTitle");
 const Transition = loadHeadlessui("Transition");
 const TransitionChild = loadHeadlessui("TransitionChild");
 
-import FormInput from "@/GlobalComponents/FormInput";
+import { FormInput } from "@/GlobalComponents/Shared/Forms";
 import { getDefaultStoreLogo } from "@/utilities/mediaResolver";
-import ButtonSpinnerLoader from "@/GlobalComponents/useCommon/ButtonSpinnerLoader";
+import { ButtonSpinnerLoader } from "@/GlobalComponents/Shared/Common";
 import CommonButton from "@/GlobalComponents/Reused/CommonButton";
 import CommonLink from "@/GlobalComponents/Reused/CommonLink";
 
@@ -25,6 +25,7 @@ const SignInModal = ({
   setIsChangeForgotPasswordModalFunc,
   token,
   storeSettings,
+  logo,
 }) => {
   const {
     value,
@@ -40,14 +41,14 @@ const SignInModal = ({
     Logosrc,
     handleCloseSigninModal,
     addons,
-  } = useSigninModalFunc({
+  } = useSigninModal({
     isSigninModal,
     setIsSigninModal,
     setIsSignupModal,
     setIsChangeForgotPasswordModalFunc,
     storeSettings,
   });
-  
+
 
   return (
     <Transition show={isSigninModal} as={Fragment}>
@@ -91,15 +92,25 @@ const SignInModal = ({
               </div>
               <div className="w-full max-w-md grow transform overflow-auto rounded-xl p-[40px_24px] text-center align-middle shadow-xl transition-all max-md:p-4">
                 <div className="mb-6 flex justify-center">
-                  <img
-                    src={Logosrc || getDefaultStoreLogo()}
-                    alt="Logo"
-                    className="h-12 max-w-[200px] object-contain"
-                    onError={({ currentTarget }) => {
-                      currentTarget.onerror = null;
-                      currentTarget.src = getDefaultStoreLogo();
-                    }}
-                  />
+                  {logo ? (
+                    logo
+                  ) : Logosrc && !Logosrc.includes("/platforms/") ? (
+                    <img
+                      src={Logosrc}
+                      alt="Logo"
+                      className="h-12 max-w-[200px] object-contain"
+                      onError={({ currentTarget }) => {
+                        currentTarget.onerror = null;
+                        currentTarget.src = "/img/spurt-logo.svg";
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src="/img/spurt-logo.svg"
+                      alt="Logo"
+                      className="h-12 max-w-[200px] object-contain"
+                    />
+                  )}
                 </div>
 
                 {/* Heading  */}

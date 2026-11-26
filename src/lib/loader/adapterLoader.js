@@ -3,6 +3,7 @@ import path from "path";
 import vm from "vm";
 import { createRequire } from "module";
 import { findAdapterDir } from "./adapterLocator.js";
+import { resolvePathWithinRoot, validateAdapterName } from "./pathSecurity.js";
 
 const adapterCache = new Map();
 
@@ -18,7 +19,14 @@ function getNativeRequire(fromPath) {
     return __non_webpack_require__;
   }
 
-  // 2. Node module createRequire via eval require
+  // 2. Standard Node module createRequire (works in Turbopack & ESM without bundler interception)
+  try {
+    if (typeof createRequire === "function") {
+      return createRequire(fromPath || path.resolve(process.cwd(), "package.json"));
+    }
+  } catch {}
+
+  // 3. Node module createRequire via eval require
   try {
     const nodeReq = (0, eval)("require");
     if (typeof nodeReq === "function") {
@@ -29,13 +37,6 @@ function getNativeRequire(fromPath) {
         }
       } catch {}
       return nodeReq;
-    }
-  } catch {}
-
-  // 3. Fallback to imported createRequire
-  try {
-    if (typeof createRequire === "function") {
-      return createRequire(fromPath || path.resolve(process.cwd(), "package.json"));
     }
   } catch {}
 
@@ -60,6 +61,10 @@ function requireExternalModule(filePath) {
 
   try {
     const code = fs.readFileSync(filePath, "utf-8");
+    // Uncompiled ESM source files in dev src/adapters/ cannot be executed directly via vm.compileFunction (CJS)
+    if (/^\s*(import|export)\s/m.test(code)) {
+      return null;
+    }
     const nativeRequire = getNativeRequire(filePath);
     const customRequire = function (id) {
       if (nativeRequire && typeof nativeRequire === "function") {
@@ -105,40 +110,26 @@ function requireExternalModule(filePath) {
 }
 
 /**
- * On-demand compile helper for uncompiled adapter folders dropped at runtime.
- */
-function tryAutoCompile(adapterDir, adapterName) {
-  try {
-    const req = getNativeRequire();
-    const { execSync } = req ? req("child_process") : {};
-    const scriptPath = path.resolve(process.cwd(), "scripts", "build-adapter.mjs");
-    if (execSync && fs.existsSync(scriptPath)) {
-      execSync(`node "${scriptPath}" ${adapterName}`, { stdio: "ignore" });
-      const outFilePath = path.join(adapterDir, "index.js");
-      if (fs.existsSync(outFilePath)) return outFilePath;
-    }
-    return null;
-  } catch (compileErr) {
-    console.warn(`[adapterLoader] On-demand compile failed for adapter ${adapterName}:`, compileErr.message);
-    return null;
-  }
-}
-
-/**
- * Dynamically loads an adapter package from disk (or cache).
+ * Dynamically loads a precompiled adapter package from disk (or cache).
+ * Runtime compilation is disabled; adapters must be prebuilt at build time.
  *
  * @param {string} adapterName - e.g. "medusa", "spurt"
  * @returns {object|null} Adapter definition containing domain classes & capabilities
  */
 export function loadAdapter(adapterName) {
-  if (!adapterName) return null;
-  const key = adapterName.toLowerCase().trim();
+  const key = validateAdapterName(adapterName);
+  if (!key) {
+    if (adapterName) {
+      console.warn(`[adapterLoader] Rejected invalid or unknown adapter name.`);
+    }
+    return null;
+  }
 
   if (adapterCache.has(key)) {
     return adapterCache.get(key);
   }
 
-  // 1. Locate adapter directory on disk
+  // 1. Locate adapter directory on disk (already validated & root-contained)
   const adapterDir = findAdapterDir(key);
   if (!adapterDir) {
     console.warn(`[adapterLoader] Could not locate adapter directory for "${key}".`);
@@ -147,8 +138,8 @@ export function loadAdapter(adapterName) {
 
   // 2. Read adapter.json manifest if present
   let manifest = {};
-  const manifestPath = path.join(adapterDir, "adapter.json");
-  if (fs.existsSync(manifestPath)) {
+  const manifestPath = resolvePathWithinRoot(adapterDir, "adapter.json");
+  if (manifestPath && fs.existsSync(manifestPath)) {
     try {
       manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
     } catch (e) {
@@ -156,30 +147,23 @@ export function loadAdapter(adapterName) {
     }
   }
 
-  // 3. Resolve entry file
-  const entryFiles = [
-    manifest.entry ? path.join(adapterDir, manifest.entry) : null,
-    path.join(adapterDir, "dist", "index.js"),
-    path.join(adapterDir, "index.js"),
-    path.join(adapterDir, "index.cjs"),
+  // 3. Resolve entry file strictly contained within adapterDir
+  const entryCandidates = [
+    typeof manifest.entry === "string" && manifest.entry ? manifest.entry : null,
+    path.join("dist", "index.js"),
+    "index.js",
+    "index.cjs",
   ].filter(Boolean);
+
+  const entryFiles = entryCandidates
+    .map((relEntry) => resolvePathWithinRoot(adapterDir, relEntry))
+    .filter(Boolean);
 
   let loadedMod = null;
   for (const entryPath of entryFiles) {
     if (fs.existsSync(entryPath)) {
       loadedMod = requireExternalModule(entryPath);
       if (loadedMod) break;
-    }
-  }
-
-  // 4. Try JIT compile if raw index.js exists but wasn't directly require-able
-  if (!loadedMod) {
-    const rawIndex = path.join(adapterDir, "index.js");
-    if (fs.existsSync(rawIndex)) {
-      const compiledPath = tryAutoCompile(adapterDir, key);
-      if (compiledPath && fs.existsSync(compiledPath)) {
-        loadedMod = requireExternalModule(compiledPath);
-      }
     }
   }
 

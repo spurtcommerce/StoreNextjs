@@ -6,6 +6,8 @@ const ProductListPage = ({
   storeSettings,
   initialCategorySlug,
   categoryName,
+  initialKeyword,
+  searchParams,
 }) => {
   return (
     <>
@@ -14,6 +16,8 @@ const ProductListPage = ({
         storeSettings={storeSettings}
         initialCategorySlug={initialCategorySlug}
         categoryName={categoryName}
+        initialKeyword={initialKeyword}
+        searchParams={searchParams}
       />
     </>
   );

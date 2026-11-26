@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180" fill="none" aria-label="Harvest Horizon">
+  <defs>
+    <clipPath id="emblemClipHorizon">
+      <circle cx="95" cy="90" r="63" />
+    </clipPath>
+  </defs>
+  <g>
+    <circle cx="95" cy="90" r="63" fill="#FBF8EE" />
+    <path d="M 95,25 A 65,65 0 0,0 95,155" fill="none" stroke="#D3A029" stroke-width="5" stroke-linecap="round" />
+    <path d="M 95,25 A 65,65 0 0,1 95,155" fill="none" stroke="#164A29" stroke-width="5" stroke-linecap="round" />
+    <g clip-path="url(#emblemClipHorizon)">
+      <path d="M 95,85 L 95,60" stroke="#164A29" stroke-width="3" stroke-linecap="round" />
+      <path d="M 68,60 A 27,27 0 0,1 122,60 Z" fill="#D3A029" />
+      <path d="M 20,80 Q 95,65 170,80 L 170,160 L 20,160 Z" fill="#164A29" />
+      <line x1="25" y1="80" x2="165" y2="80" stroke="#164A29" stroke-width="3" />
+    </g>
+  </g>
+  <text x="185" y="72" font-family="'Georgia', 'Times New Roman', serif" font-size="46" font-weight="bold" fill="#164A29" letter-spacing="1.5">HARVEST</text>
+  <text x="185" y="120" font-family="'Georgia', 'Times New Roman', serif" font-size="46" font-weight="bold" fill="#164A29" letter-spacing="1.5">HORIZON</text>
+  <text x="186" y="146" font-family="'Georgia', 'Times New Roman', serif" font-size="14" font-weight="bold" fill="#164A29" letter-spacing="0.2">From Our Fields to Your Future</text>
+</svg>

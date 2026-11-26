@@ -14,13 +14,14 @@ const TabsHeader = loadMaterialtailwind("TabsHeader");
 const Tab = loadMaterialtailwind("Tab");
 
 // context
-import { useAddons } from "@/GlobalComponents/useCommon/AddonProvider";
+import { useGlobalProvider } from "@/GlobalComponents/Shared/Common";
 
 // Utilities
 import { isRouteSupported } from "@/config/adapterRoutes";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getClientAuthToken, getValidAuthToken } from "@/utilities/tokenHelper";
 
 const SettingsSidebar = ({ children }) => {
   const t = useTranslations();
@@ -28,25 +29,32 @@ const SettingsSidebar = ({ children }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const hasCookie = document.cookie
-        .split("; ")
-        .some((c) =>
-          c.startsWith("BearerToken=") ||
-          c.startsWith("token=") ||
-          c.startsWith("medusa_auth_token=")
-        );
-      const hasStorage = !!(
-        localStorage.getItem("BearerToken") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("medusa_auth_token")
-      );
-      if (!hasCookie && !hasStorage) {
-        router.replace("/");
-      }
+      const checkToken = () => {
+        const valid = getValidAuthToken(getClientAuthToken());
+        if (!valid) {
+          window.location.replace("/?auth_required=1");
+        }
+      };
+
+      checkToken();
+
+      const handleLogout = () => {
+        window.location.replace("/?auth_required=1");
+      };
+
+      window.addEventListener("user_logged_out", handleLogout);
+      window.addEventListener("customer_logged_out", handleLogout);
+      window.addEventListener("storage", checkToken);
+
+      return () => {
+        window.removeEventListener("user_logged_out", handleLogout);
+        window.removeEventListener("customer_logged_out", handleLogout);
+        window.removeEventListener("storage", checkToken);
+      };
     }
   }, [router]);
 
-  const { addons } = useAddons();
+  const { } = useGlobalProvider();
 
   const pathname = usePathname();
   const isSettingsHome = pathname === "/settings";
@@ -64,7 +72,7 @@ const SettingsSidebar = ({ children }) => {
   return isSettingsHome ? (
     children
   ) : (
-    <div className="flex min-h-[calc(100vh-105px)] grow flex-col bg-[var(--color-f9fafc)]">
+    <div className="flex min-h-[calc(100vh-105px)] grow flex-col bg-[var(--color-f9fafc)] mb-10 md:mb-16">
       <div className="mx-auto flex h-full w-full max-w-360 grow flex-col bg-[var(--color-white)]">
         <Tabs
           value={currentPath}

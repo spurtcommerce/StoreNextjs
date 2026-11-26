@@ -18,10 +18,52 @@
   "onMatchHeaders": [],
   "rewrites": {
     "beforeFiles": [],
-    "afterFiles": [],
+    "afterFiles": [
+      {
+        "source": "/templates/:id/:asset*",
+        "destination": "/api/templates/:id/:asset*",
+        "regex": "^/templates(?:/([^/]+?))(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+      },
+      {
+        "source": "/opencart/index.php/api/v1/:path*",
+        "destination": "http://localhost/opencart/api/v1/:path*",
+        "regex": "^/opencart/index\\.php/api/v1(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+      },
+      {
+        "source": "/opencart/:path*",
+        "destination": "http://localhost/opencart/:path*",
+        "regex": "^/opencart(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+      }
+    ],
     "fallback": []
   },
   "dynamicRoutes": [
+    {
+      "page": "/api/adapters/[id]/[asset]",
+      "regex": "^/api/adapters/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPasset": "nxtPasset"
+      },
+      "namedRegex": "^/api/adapters/(?<nxtPid>[^/]+?)/(?<nxtPasset>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/connectors/[id]/bridge",
+      "regex": "^/api/connectors/([^/]+?)/bridge(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/connectors/(?<nxtPid>[^/]+?)/bridge(?:/)?$"
+    },
+    {
+      "page": "/api/connectors/[id]/[asset]",
+      "regex": "^/api/connectors/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPasset": "nxtPasset"
+      },
+      "namedRegex": "^/api/connectors/(?<nxtPid>[^/]+?)/(?<nxtPasset>[^/]+?)(?:/)?$"
+    },
     {
       "page": "/api/templates/[id]/[asset]",
       "regex": "^/api/templates/([^/]+?)/([^/]+?)(?:/)?$",
@@ -30,6 +72,46 @@
         "nxtPasset": "nxtPasset"
       },
       "namedRegex": "^/api/templates/(?<nxtPid>[^/]+?)/(?<nxtPasset>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/uploads/[filename]",
+      "regex": "^/api/uploads/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPfilename": "nxtPfilename"
+      },
+      "namedRegex": "^/api/uploads/(?<nxtPfilename>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/v1/[...path]",
+      "regex": "^/api/v1/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPpath": "nxtPpath"
+      },
+      "namedRegex": "^/api/v1/(?<nxtPpath>.+?)(?:/)?$"
+    },
+    {
+      "page": "/category/[...slug]",
+      "regex": "^/category/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/category/(?<nxtPslug>.+?)(?:/)?$"
+    },
+    {
+      "page": "/collection/[slug]",
+      "regex": "^/collection/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/collection/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/collections/[slug]",
+      "regex": "^/collections/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/collections/(?<nxtPslug>[^/]+?)(?:/)?$"
     },
     {
       "page": "/pages/[...slug]",
@@ -82,10 +164,46 @@
       "namedRegex": "^/account\\-verify(?:/)?$"
     },
     {
+      "page": "/api/adapters",
+      "regex": "^/api/adapters(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/adapters(?:/)?$"
+    },
+    {
+      "page": "/api/admin/auth/login",
+      "regex": "^/api/admin/auth/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/auth/login(?:/)?$"
+    },
+    {
+      "page": "/api/admin/auth/logout",
+      "regex": "^/api/admin/auth/logout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/auth/logout(?:/)?$"
+    },
+    {
+      "page": "/api/admin/auth/me",
+      "regex": "^/api/admin/auth/me(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/auth/me(?:/)?$"
+    },
+    {
       "page": "/api/banner-revalidate",
       "regex": "^/api/banner\\-revalidate(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/banner\\-revalidate(?:/)?$"
+    },
+    {
+      "page": "/api/connectors",
+      "regex": "^/api/connectors(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/connectors(?:/)?$"
+    },
+    {
+      "page": "/api/customer/rpc",
+      "regex": "^/api/customer/rpc(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/customer/rpc(?:/)?$"
     },
     {
       "page": "/api/manifest",
@@ -118,6 +236,12 @@
       "namedRegex": "^/cart(?:/)?$"
     },
     {
+      "page": "/category",
+      "regex": "^/category(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/category(?:/)?$"
+    },
+    {
       "page": "/checkout",
       "regex": "^/checkout(?:/)?$",
       "routeKeys": {},
@@ -130,10 +254,40 @@
       "namedRegex": "^/choose\\-address(?:/)?$"
     },
     {
+      "page": "/collection",
+      "regex": "^/collection(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/collection(?:/)?$"
+    },
+    {
+      "page": "/compare",
+      "regex": "^/compare(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/compare(?:/)?$"
+    },
+    {
       "page": "/favicon.ico",
       "regex": "^/favicon\\.ico(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/feature-products",
+      "regex": "^/feature\\-products(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/feature\\-products(?:/)?$"
+    },
+    {
+      "page": "/featured-product",
+      "regex": "^/featured\\-product(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/featured\\-product(?:/)?$"
+    },
+    {
+      "page": "/featured-products",
+      "regex": "^/featured\\-products(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/featured\\-products(?:/)?$"
     },
     {
       "page": "/manage",
@@ -152,6 +306,12 @@
       "regex": "^/manage/login(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/manage/login(?:/)?$"
+    },
+    {
+      "page": "/manage/reviews",
+      "regex": "^/manage/reviews(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/manage/reviews(?:/)?$"
     },
     {
       "page": "/manage/templates",
@@ -188,6 +348,12 @@
       "regex": "^/privacy\\-policy(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/privacy\\-policy(?:/)?$"
+    },
+    {
+      "page": "/product",
+      "regex": "^/product(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/product(?:/)?$"
     },
     {
       "page": "/product-compare",
@@ -260,6 +426,12 @@
       "regex": "^/widget(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/widget(?:/)?$"
+    },
+    {
+      "page": "/wishlist",
+      "regex": "^/wishlist(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/wishlist(?:/)?$"
     }
   ],
   "dataRoutes": [],

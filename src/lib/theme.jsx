@@ -1,16 +1,44 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { flushSync } from "react-dom";
+
+// Filter out React 19 false-positive warning for inline theme scripts in development and legacy Redux state key warnings
+if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (
+      typeof args[0] === "string" &&
+      (args[0].includes("Encountered a script tag") ||
+        args[0].includes("Unexpected key") ||
+        args[0].includes("Unexpected keys"))
+    ) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+}
 
 export const THEME_STORAGE_KEY = "storenext:theme";
 
 /**
- * Runs in <head> before first paint: applies the saved theme, or the OS preference
- * when nothing is saved, so the page never flashes the wrong theme.
- * If viewing horizon template (store === "horizon"), forces light theme.
+ * Generates the inline init script for <head> to prevent flash of wrong theme (FOUC).
+ * Enforces light theme on all storefront routes, and allows saved theme preference on /manage routes.
+ *
+ * @param {object} [options]
+ * @param {boolean} [options.forceLight=false]
+ * @returns {string}
  */
-export const THEME_INIT_SCRIPT = `(function(){try{var isHorizon=(document.documentElement&&document.documentElement.getAttribute("data-store")==="horizon")||(document.body&&document.body.getAttribute("data-theme")==="horizon");if(isHorizon){document.documentElement.dataset.theme="light";return;}var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})();`;
+export function getThemeInitScript({ forceLight = false } = {}) {
+  return `(function(){try{var d=document.documentElement;var force=${JSON.stringify(Boolean(forceLight))};var p=(window.location&&window.location.pathname)||"";if(force||!p.startsWith("/manage")){d.dataset.theme="light";return;}var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}d.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})();`;
+}
+
+/**
+ * Runs in <head> before first paint: applies the saved theme only on /manage routes,
+ * forcing light theme on all storefront routes.
+ */
+export const THEME_INIT_SCRIPT = getThemeInitScript();
 
 const ThemeContext = createContext(null);
 
@@ -52,19 +80,46 @@ function readTheme() {
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
 
-export function ThemeProvider({ children, isHorizon = false }) {
-  // If isHorizon is true (Horizon template active on storefront), enforce light theme on DOM
+/**
+ * Generic theme provider:
+ * - On `/manage` routes: activates dynamic theme (light/dark with OS sync and localStorage).
+ * - On storefront routes: enforces light theme across all templates without template hardcoding.
+ * - `forceLight`: optional override to enforce light theme regardless of route.
+ */
+export function ThemeProvider({
+  children,
+  forceLight = false,
+  isHorizon = false, // Backwards-compatible alias for forceLight
+  isManageRoute: isManageProp = false,
+}) {
+  const pathname = usePathname();
+  const isManageRoute = typeof pathname === "string" ? pathname.startsWith("/manage") : Boolean(isManageProp);
+  const enforceLight = forceLight || isHorizon || !isManageRoute;
   const [theme, setThemeState] = useState("light");
 
   useEffect(() => {
-    if (isHorizon) {
+    if (enforceLight) {
       if (typeof document !== "undefined") {
         document.documentElement.dataset.theme = "light";
       }
+      setThemeState("light");
       return;
     }
 
-    setThemeState(readTheme());
+    let nextTheme = readTheme();
+    try {
+      const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === "light" || saved === "dark") {
+        nextTheme = saved;
+      } else {
+        nextTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+    } catch {}
+
+    if (typeof document !== "undefined") {
+      document.documentElement.dataset.theme = nextTheme;
+    }
+    setThemeState(nextTheme);
 
     // Follow OS changes until the user picks a theme themselves.
     const media = window.matchMedia("(prefers-color-scheme: dark)");
@@ -80,21 +135,21 @@ export function ThemeProvider({ children, isHorizon = false }) {
     };
     media.addEventListener("change", onChange);
     return () => media.removeEventListener("change", onChange);
-  }, [isHorizon]);
+  }, [enforceLight]);
 
   const applyTheme = useCallback((next) => {
-    if (!isHorizon && typeof document !== "undefined") {
+    if (!enforceLight && typeof document !== "undefined") {
       document.documentElement.dataset.theme = next;
     }
-    setThemeState(next);
+    setThemeState(enforceLight ? "light" : next);
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {}
-  }, [isHorizon]);
+  }, [enforceLight]);
 
   const setTheme = useCallback(
     (next, origin) => {
-      if (isHorizon) return;
+      if (enforceLight) return;
       const root = document.documentElement;
       if (!origin) {
         applyTheme(next);
@@ -108,20 +163,20 @@ export function ThemeProvider({ children, isHorizon = false }) {
       root.style.setProperty("--reveal-y", `${origin.y}px`);
       document.startViewTransition(() => flushSync(() => applyTheme(next)));
     },
-    [applyTheme, isHorizon]
+    [applyTheme, enforceLight]
   );
 
   const toggleTheme = useCallback(
     (origin) => {
-      if (isHorizon) return;
+      if (enforceLight) return;
       setTheme(readTheme() === "dark" ? "light" : "dark", origin);
     },
-    [setTheme, isHorizon]
+    [setTheme, enforceLight]
   );
 
   const value = useMemo(
-    () => ({ theme: isHorizon ? "light" : theme, setTheme, toggleTheme, isHorizon }),
-    [theme, setTheme, toggleTheme, isHorizon]
+    () => ({ theme: enforceLight ? "light" : theme, setTheme, toggleTheme, enforceLight }),
+    [theme, setTheme, toggleTheme, enforceLight]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -134,7 +189,7 @@ export function useTheme() {
       theme: "light",
       setTheme: () => {},
       toggleTheme: () => {},
-      isHorizon: false,
+      enforceLight: true,
     };
   }
   return v;

@@ -1,39 +1,48 @@
+// Adapter registry module - dynamic loading without static hardcoded adapter imports
 import { getCommerceAdapter } from "../../../config/adapter.config.js";
-import spurtDefinition from "../../spurt/index.js";
-import medusaDefinition from "../../medusa/index.js";
+import { getClientAuthToken } from "../../../utilities/tokenHelper.js";
+import { adapterLoaders, defaultCapabilities, defaultAdapter } from "./adapter.loaders.js";
 
 const registry = new Map();
+const failedBrowserLoaders = new Set();
 
-// Built-in registration for standard adapters (enables client-side browser execution)
-registerCommerceAdapter("spurt", spurtDefinition);
-registerCommerceAdapter("medusa", medusaDefinition);
+async function invokeServerAdapterRpc(domain, method, args) {
+  if (
+    typeof window === "undefined" ||
+    window.__COMMERCE_CONFIG__?.adapterAvailable === false
+  ) {
+    return undefined;
+  }
 
-const KNOWN_DEFAULT_CAPABILITIES = {
-  medusa: {
-    reviews: false,
-    relatedProducts: false,
-    variants: true,
-    downloads: false,
-    wishlist: true,
-    specifications: false,
-    banners: true,
-  },
-  spurt: {
-    reviews: true,
-    relatedProducts: true,
-    variants: true,
-    downloads: true,
-    specifications: true,
-    banners: true,
-  },
-};
+  try {
+    const headers = { "Content-Type": "application/json" };
+    const token = getClientAuthToken();
+    if (token) {
+      headers["x-storefront-token"] = token;
+    }
+
+    const res = await fetch("/api/customer/rpc", {
+      method: "POST",
+      credentials: "same-origin",
+      headers,
+      body: JSON.stringify({ domain, method, args }),
+    });
+    const data = await res.json().catch(() => null);
+    if (res.ok && data?.ok) {
+      return data.result;
+    }
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 /**
  * Register a commerce provider adapter package dynamically.
- * Allows any adapter (Spurt, Medusa, Shopify, BigCommerce, etc.) to connect.
+ * Allows any future adapter to connect.
  *
- * @param {string} providerName - e.g. "spurt", "medusa", "shopify"
- * @param {object} definition - { cart, product, productDetail, category, auth, address, checkout, payment, order, wishlist, capabilities }
+ * @param {string} providerName - Commerce provider identifier
+ * @param {object} definition - { cart, product, productDetail, category, auth, address, checkout, payment, order, wishlist, store, capabilities }
  */
 export function registerCommerceAdapter(providerName, definition) {
   if (!providerName || typeof providerName !== "string") return;
@@ -45,136 +54,199 @@ export function registerCommerceAdapter(providerName, definition) {
 }
 
 /**
- * Ensures the specified provider adapter is loaded into the registry.
- * Dynamically resolves external adapter packages from disk.
+ * Extract an adapter definition from an imported module
+ */
+function extractAdapterDefinition(mod, providerName) {
+  if (!mod) return null;
+  const name = typeof providerName === "string" ? providerName.toLowerCase() : "";
+  return (
+    mod.definition ||
+    mod.default ||
+    (name ? mod[`${name}AdapterDefinition`] || mod[`${name}Adapter`] : null) ||
+    mod
+  );
+}
+
+/**
+ * Ensures an adapter is registered in the registry.
+ * Returns the definition if already loaded; otherwise returns null.
  *
- * @param {string} providerName
+ * @param {string} [providerName]
  * @returns {object|null}
  */
 export function ensureAdapterLoaded(providerName) {
-  if (!providerName) return null;
-  const key = providerName.toLowerCase().trim();
-  if (registry.has(key)) {
-    return registry.get(key);
-  }
+  const key = (providerName || getCommerceAdapter() || defaultAdapter || "").toLowerCase().trim();
+  if (!key) return null;
+  return registry.get(key) || null;
+}
 
-  // Only attempt disk loading in Node.js runtime (server-side)
+/**
+ * Preload a specific adapter dynamically.
+ * Only imports the adapter when available, caching it in the registry.
+ *
+ * @param {string} [adapterName]
+ * @returns {Promise<object|null>}
+ */
+export async function preloadAdapter(adapterName) {
+  const key = (adapterName || getCommerceAdapter() || defaultAdapter || "").toLowerCase().trim();
+  if (!key) return null;
+  if (registry.has(key)) return registry.get(key);
+
+  // Server runtime: verify adapter folder is physically present and run from that folder
   if (typeof window === "undefined") {
     try {
-      let loadAdapter = null;
-
-      // 1. Next.js server bundle relative require
-      try {
-        const mod = require("../../../lib/loader/adapterLoader.js");
-        loadAdapter = mod?.loadAdapter || mod?.default?.loadAdapter;
-      } catch {}
-
-      // 2. Direct absolute path resolution via Node module require
-      if (!loadAdapter) {
-        try {
-          const req = typeof require !== "undefined" ? require : (0, eval)("require");
-          const candidatePaths = [
-            (process.cwd() + "/src/lib/loader/adapterLoader.js").replace(/\\/g, "/"),
-            (process.cwd() + "/lib/loader/adapterLoader.js").replace(/\\/g, "/"),
-          ];
-          for (const p of candidatePaths) {
-            try {
-              const mod = req(p);
-              loadAdapter = mod?.loadAdapter || mod?.default?.loadAdapter;
-              if (loadAdapter) break;
-            } catch {}
-          }
-        } catch {}
+      const { isAdapterAvailable, isDistModeRuntime } = await import(
+        "../../../lib/adapterLocator.js"
+      );
+      if (!isAdapterAvailable(key)) {
+        return null;
       }
 
-      // 3. Fallback via createRequire
-      if (!loadAdapter && typeof process !== "undefined") {
-        try {
-          const { createRequire } = (0, eval)("require")("module");
-          const req = createRequire(process.cwd() + "/package.json");
-          const mod = req((process.cwd() + "/src/lib/loader/adapterLoader.js").replace(/\\/g, "/"));
-          loadAdapter = mod?.loadAdapter || mod?.default?.loadAdapter;
-        } catch {}
+      const { loadAdapter } = await import("../../../lib/loader/adapterLoader.js");
+      const externalDef = loadAdapter(key);
+      if (externalDef) {
+        registerCommerceAdapter(key, externalDef);
+        return registry.get(key);
       }
 
-      if (loadAdapter) {
-        const definition = loadAdapter(key);
-        if (definition) {
-          registerCommerceAdapter(key, definition);
+      // In standalone dist mode, adapters must run strictly from dist/adapters/<key>
+      if (isDistModeRuntime()) {
+        return null;
+      }
+    } catch {
+      return null;
+    }
+  } else {
+    // Browser runtime: refuse to load if server marked the adapter unavailable on disk
+    if (
+      typeof window.__COMMERCE_CONFIG__ === "object" &&
+      window.__COMMERCE_CONFIG__ !== null &&
+      window.__COMMERCE_CONFIG__.adapterAvailable === false
+    ) {
+      return null;
+    }
+  }
+
+  const loader = adapterLoaders?.[key];
+  if (loader && !(typeof window !== "undefined" && failedBrowserLoaders.has(key))) {
+    try {
+      const loadFn = typeof loader === "function" ? loader : loader?.load;
+      if (typeof loadFn === "function") {
+        const mod = await loadFn();
+        const def = extractAdapterDefinition(mod, key);
+        if (def) {
+          registerCommerceAdapter(key, def);
           return registry.get(key);
         }
       }
     } catch (err) {
-      console.warn(`[adapter.registry] Error loading adapter "${key}":`, err.message);
+      if (typeof window !== "undefined") {
+        failedBrowserLoaders.add(key);
+      } else {
+        console.warn(
+          `[Adapter Registry] Dynamic import for adapter "${key}" failed:`,
+          err.message || err
+        );
+      }
     }
   }
 
-  return registry.get(key) || null;
+  return null;
+}
+
+/**
+ * Preload the currently active adapter dynamically.
+ */
+export async function preloadActiveAdapter() {
+  const provider = (getCommerceAdapter() || defaultAdapter || "").toLowerCase().trim();
+  return provider ? preloadAdapter(provider) : null;
 }
 
 /**
  * Dynamically resolves an adapter instance for the specified domain
  * based on the active commerce adapter configured in store-config.json.
  *
+ * - If the adapter is already loaded, constructs the class contract via `new Target()`.
+ * - If not yet loaded, returns an async Proxy that dynamically imports the adapter
+ *   before executing any method, ensuring absent adapters fail cleanly.
+ *
  * @param {"cart"|"product"|"productDetail"|"category"|"auth"|"address"|"checkout"|"payment"|"order"|"wishlist"|"store"} domain
  * @returns {any}
  */
 export function getAdapterInstance(domain) {
-  const rawProvider = getCommerceAdapter();
-  const provider = rawProvider ? rawProvider.toLowerCase().trim() : "";
-
+  const provider = (getCommerceAdapter() || defaultAdapter || "").toLowerCase().trim();
   if (!provider) {
-    throw new Error(
-      "No commerce adapter is configured. Please specify 'commerce.adapter' in store-config.json or NEXT_PUBLIC_COMMERCE_ADAPTER."
-    );
+    return null;
   }
 
-  let providerDef = registry.get(provider);
+  const providerDef = registry.get(provider);
 
-  if (!providerDef) {
-    providerDef = ensureAdapterLoaded(provider);
-  }
-
-  if (!providerDef) {
-    throw new Error(
-      `Commerce adapter "${provider}" is not registered. Please ensure adapter build exists in dist/adapters/${provider} or adapters/${provider}. Available adapters: ${Array.from(registry.keys()).join(", ")}`
-    );
-  }
-
-  const Target = providerDef[domain];
-  if (!Target) {
-    throw new Error(
-      `Commerce provider "${provider}" does not implement "${domain}" adapter.`
-    );
-  }
-
-  if (typeof Target === "function") {
-    try {
-      return new Target();
-    } catch {
-      return Target();
+  if (providerDef) {
+    const Target = providerDef[domain];
+    if (Target) {
+      if (typeof Target === "function") {
+        return new Target();
+      }
+      return Target;
     }
+    return null;
   }
 
-  return Target;
+  // Async Proxy: dynamically imports the adapter on demand before executing any method
+  return new Proxy(
+    {},
+    {
+      get(_, prop) {
+        return async (...args) => {
+          let def = registry.get(provider);
+          if (!def) {
+            def = await preloadAdapter(provider);
+          }
+          if (!def) {
+            if (typeof window !== "undefined") {
+              return invokeServerAdapterRpc(domain, prop, args);
+            }
+            return undefined;
+          }
+          const Target = def[domain];
+          if (!Target) {
+            return undefined;
+          }
+          const instance = typeof Target === "function" ? new Target() : Target;
+          if (typeof instance[prop] !== "function") {
+            return instance[prop];
+          }
+          return instance[prop].apply(instance, args);
+        };
+      },
+    }
+  );
 }
 
 /**
  * Checks if the currently active adapter supports a specific feature
- * @param {string} capability - e.g. "reviews", "relatedProducts"
+ * @param {string} capability - e.g. "reviews", "relatedProducts", "collections"
  * @returns {boolean}
  */
 export function hasCapability(capability) {
-  const rawProvider = getCommerceAdapter();
-  const provider = rawProvider ? rawProvider.toLowerCase().trim() : "";
+  const provider = (getCommerceAdapter() || defaultAdapter || "").toLowerCase().trim();
   if (!provider) return false;
 
-  let providerDef = registry.get(provider);
-
-  if (!providerDef) {
-    providerDef = ensureAdapterLoaded(provider);
+  if (
+    typeof window !== "undefined" &&
+    typeof window.__COMMERCE_CONFIG__ === "object" &&
+    window.__COMMERCE_CONFIG__ !== null
+  ) {
+    if (window.__COMMERCE_CONFIG__.adapterAvailable === false) {
+      return false;
+    }
+    const browserCaps = window.__COMMERCE_CONFIG__.adapterCapabilities;
+    if (browserCaps && typeof browserCaps[capability] !== "undefined") {
+      return Boolean(browserCaps[capability]);
+    }
   }
 
+  const providerDef = registry.get(provider);
   if (
     providerDef &&
     providerDef.capabilities &&
@@ -183,12 +255,8 @@ export function hasCapability(capability) {
     return Boolean(providerDef.capabilities[capability]);
   }
 
-  // Fallback to known default capabilities (safe on client-side where disk loading is skipped)
-  if (
-    KNOWN_DEFAULT_CAPABILITIES[provider] &&
-    typeof KNOWN_DEFAULT_CAPABILITIES[provider][capability] !== "undefined"
-  ) {
-    return Boolean(KNOWN_DEFAULT_CAPABILITIES[provider][capability]);
+  if (defaultCapabilities && defaultCapabilities[provider]) {
+    return Boolean(defaultCapabilities[provider][capability]);
   }
 
   return false;
@@ -199,5 +267,6 @@ export function hasCapability(capability) {
  * @returns {string[]}
  */
 export function getRegisteredAdapters() {
-  return Array.from(registry.keys());
+  const loaderKeys = adapterLoaders ? Object.keys(adapterLoaders) : [];
+  return Array.from(new Set([...registry.keys(), ...loaderKeys]));
 }

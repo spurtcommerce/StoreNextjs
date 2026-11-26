@@ -1,52 +1,99 @@
-import storeConfigStatic from "../../../../store-config.json";
+import { getCommerceConfig } from "../../../config/adapter.config.js";
 
-function getCommerceConfig() {
-  if (typeof window === "undefined") {
-    try {
-      const fs = require("fs");
-      const path = require("path");
-      const configPath = path.join(process.cwd(), "store-config.json");
-      if (fs.existsSync(configPath)) {
-        return JSON.parse(fs.readFileSync(configPath, "utf-8"));
-      }
-    } catch {
-      // Fallback to static import
-    }
-  } else {
-    try {
-      if (typeof window !== "undefined" && window.__COMMERCE_CONFIG__) {
-        return {
-          ...storeConfigStatic,
-          commerce: {
-            ...(storeConfigStatic?.commerce || {}),
-            ...window.__COMMERCE_CONFIG__,
-          },
-        };
-      }
-    } catch {}
+function getDefaultTemplateLogo(tpl = "default") {
+  const t = (tpl || "default").toLowerCase().trim();
+  switch (t) {
+    case "aurum": return "/img/templates/aurum-logo.svg";
+    case "horizon": return "/img/templates/horizon-logo.svg";
+    case "cloak": return "/img/templates/cloak-logo.svg";
+    case "noir": return "/img/templates/noir-logo.svg";
+    case "studio": return "/img/templates/studio-logo.svg";
+    case "axis": return "/img/templates/axis-logo.svg";
+    case "velvet": return "/img/templates/velvet-logo.svg";
+    case "maison": return "/img/templates/maison-logo.svg";
+    case "couture-fashion":
+    case "couture": return "/img/templates/couture-logo.svg";
+    case "wellpoint": return "/img/templates/wellpoint-logo.svg";
+    case "aurora-threads":
+    case "aurora": return "/img/templates/aurora-logo.svg";
+    case "eterna-capsule":
+    case "eterna": return "/img/templates/eterna-logo.svg";
+    case "default":
+    default:
+      return "/img/spurt-logo.svg";
   }
-  return storeConfigStatic;
 }
 
 /**
  * Returns canonical store settings for dynamic storefronts
  * constructed directly from store-config.json without any remote legacy Spurt calls
+ *
+ * @param {string} [adapterOverride] - Optional provider name to force settings for
  */
-export function getStoreSettingsFromConfig() {
+export function getStoreSettingsFromConfig(adapterOverride) {
   const config = getCommerceConfig();
   const commerce = config?.commerce || {};
   const template = config?.template || {};
 
+  let adapter = (
+    adapterOverride ||
+    commerce?.adapter ||
+    (typeof window !== "undefined" && window.__COMMERCE_CONFIG__?.adapter) ||
+    ""
+  ).toLowerCase().trim();
+
+  if (!adapter && typeof document !== "undefined") {
+    try {
+      const match = document.cookie.match(/(?:^|;\s*)active_adapter=([^;]+)/);
+      if (match && match[1]) {
+        adapter = decodeURIComponent(match[1]).toLowerCase().trim();
+      }
+    } catch {}
+  }
+
+  const isMedusa = adapter === "medusa";
+  const isSpurt = adapter === "spurt";
+  const isOpenCart = adapter === "opencart";
+  const isWoo = adapter === "woocommerce";
+
   const currencyCode =
     process.env.NEXT_PUBLIC_STORE_CURRENCY_CODE ||
-    process.env.NEXT_PUBLIC_MEDUSA_CURRENCY_CODE ||
+    (isMedusa ? process.env.NEXT_PUBLIC_MEDUSA_CURRENCY_CODE : null) ||
     (commerce?.region === "IN" ? "INR" : "USD");
 
   const currencySymbol = currencyCode === "INR" ? "₹" : "$";
-  const storeDisplayName = "";
 
-  const isSpurt = (commerce?.adapter || "").toLowerCase().trim() === "spurt";
-  const defaultLogo = isSpurt ? "/img/logo.svg" : "/img/medusa-logo.png";
+  let storeDisplayName = "Store";
+  let metaDescription = "Shop quality products";
+  let metaKeywords = "Ecommerce, Store, Shopping";
+
+  if (isMedusa) {
+    storeDisplayName = commerce?.storeName || commerce?.metaTitle || "Store - Medusa";
+    metaDescription =
+      commerce?.metaTagDescription || "Discover our curated collection powered by Medusa.";
+    metaKeywords =
+      commerce?.metaTagKeyword || "Medusa, Ecommerce, Store, Fine Jewellery, Aurum";
+  } else if (isSpurt) {
+    storeDisplayName = commerce?.storeName || commerce?.metaTitle || "Spurtcommerce";
+    metaDescription = commerce?.metaTagDescription || "Shop quality products on Spurtcommerce";
+    metaKeywords = commerce?.metaTagKeyword || "Spurtcommerce, Ecommerce, Store";
+  } else if (isOpenCart) {
+    storeDisplayName = commerce?.storeName || commerce?.metaTitle || "OpenCart Store";
+    metaDescription = commerce?.metaTagDescription || "Shop high quality products on OpenCart Store.";
+    metaKeywords = commerce?.metaTagKeyword || "OpenCart, Ecommerce, Store";
+  } else if (isWoo) {
+    storeDisplayName = commerce?.storeName || commerce?.metaTitle || "WooCommerce Store";
+    metaDescription = commerce?.metaTagDescription || "Shop quality products on WooCommerce Store.";
+    metaKeywords = commerce?.metaTagKeyword || "WooCommerce, Ecommerce, Store";
+  } else if (adapter) {
+    storeDisplayName =
+      commerce?.storeName || `${adapter.charAt(0).toUpperCase() + adapter.slice(1)} Store`;
+    metaDescription = commerce?.metaTagDescription || `Shop quality products on ${storeDisplayName}`;
+    metaKeywords = commerce?.metaTagKeyword || `${adapter}, Ecommerce, Store`;
+  }
+
+  const activeTemplate = (template?.active || "default").toLowerCase().trim();
+  const defaultLogo = getDefaultTemplateLogo(activeTemplate);
 
   return [
     {
@@ -54,9 +101,13 @@ export function getStoreSettingsFromConfig() {
       storeName: storeDisplayName,
       siteName: storeDisplayName,
       metaTitle: storeDisplayName,
-      metaTagDescription: "",
-      metaTagKeyword: "",
-      storeUrl: "",
+      metaTagTitle: storeDisplayName,
+      metaDescription: metaDescription,
+      metaTagDescription: metaDescription,
+      metaKeyword: metaKeywords,
+      metaTagKeyword: metaKeywords,
+      metaTagKeywords: metaKeywords,
+      storeUrl: commerce?.baseUrl || "",
       storeLogo: defaultLogo,
       storeLogoPath: "",
       storeLogoName: defaultLogo,
@@ -72,23 +123,25 @@ export function getStoreSettingsFromConfig() {
       showBadge: false,
       themeId: template?.themeId || 11,
       copyrights: storeDisplayName,
-      companyDescription: "",
+      companyDescription: metaDescription,
       customerServiceHours: "9:00 AM - 6:00 PM",
-      storeEmail: "",
-      storeMobileNo: "",
-      storeTelephone: "",
-      telephone: "",
-      phone: "",
-      storeAddress: "",
-      storeAddress1: "",
+      storeEmail: isOpenCart ? "support@oc.spurtb2c.store" : "",
+      email: isOpenCart ? "support@oc.spurtb2c.store" : "",
+      storeMobileNo: isOpenCart ? "123456789" : "",
+      storeTelephone: isOpenCart ? "123456789" : "",
+      telephone: isOpenCart ? "123456789" : "",
+      phone: isOpenCart ? "123456789" : "",
+      storeAddress: isOpenCart ? "Address 1" : "",
+      address: isOpenCart ? "Address 1" : "",
+      storeAddress1: isOpenCart ? "Address 1" : "",
       storeAddress2: "",
-      storeAddressLine1: "",
+      storeAddressLine1: isOpenCart ? "Address 1" : "",
       storeAddressLine2: "",
-      storeCity: "",
+      storeCity: isOpenCart ? "Store City" : "",
       storeState: "",
       storeCountry: "",
-      storePostalCode: "",
-      storeZipcode: "",
+      storePostalCode: isOpenCart ? "10001" : "",
+      storeZipcode: isOpenCart ? "10001" : "",
       data: {
         hasActiveSubscription: 1,
       },
@@ -328,6 +381,6 @@ export function getStoreStateList() {
 }
 
 // Backward-compatibility aliases
-export const getMedusaStoreSettings = getStoreSettingsFromConfig;
+export const getMedusaStoreSettings = () => getStoreSettingsFromConfig("medusa");
 export const getMedusaCountryList = getStoreCountryList;
 export const getMedusaStateList = getStoreStateList;

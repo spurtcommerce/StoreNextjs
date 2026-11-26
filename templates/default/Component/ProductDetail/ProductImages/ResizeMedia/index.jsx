@@ -1,5 +1,5 @@
 // Component
-import CustomNextImage from "@/GlobalComponents/useCustomNextImage";
+import CustomNextImage from "@/GlobalComponents/Shared/Common/CustomNextImage";
 // 3rd Party
 import { useTranslations } from "next-intl";
 
@@ -85,7 +85,15 @@ const ResizeMedia = ({
         </div>
         <div className="flex space-x-6 rtl:space-x-[unset] px-4 h-calc">
           <div className="relative flex-13 bg-[var(--color-gray-100)] rtl:ml-6 rounded-2xl w-full min-w-full md:min-w-[75vw] h-full aspect-square">
-            {selectedImage?.mediaType == 1 ? (
+            {selectedImage?.mediaType == 2 ? (
+              <video
+                src={videoSrc}
+                className="m-auto w-full h-full object-contain"
+                autoPlay
+                controls
+                controlsList="nodownload"
+              />
+            ) : (
               <CustomNextImage
                 containerName={selectedImage?.containerName}
                 imageName={selectedImage?.image}
@@ -93,14 +101,6 @@ const ResizeMedia = ({
                 height={500}
                 width={600}
                 className={"m-auto rounded-2xl w-full h-full object-contain"}
-              />
-            ) : (
-              <video
-                src={videoSrc}
-                className="m-auto w-full h-full object-contain"
-                autoPlay
-                controls
-                controlsList="nodownload"
               />
             )}
             <button

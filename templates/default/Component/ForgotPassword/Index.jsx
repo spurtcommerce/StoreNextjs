@@ -1,5 +1,5 @@
 "use client";
-import useForgotPasswordFunc from '@/GlobalComponents/useForgotPasswordFunc/Index';
+import useForgotPasswordFunc from '@/GlobalComponents/Hooks/useAuth/useForgotPassword';
 import React, { Fragment } from 'react';
 import dynamic from 'next/dynamic';
 
@@ -14,14 +14,15 @@ const TransitionChild = loadHeadlessui("TransitionChild");
 
 
 
-import FormInput from "@/GlobalComponents/FormInput";
+import FormInput from "@/GlobalComponents/Shared/Forms/FormInput";
 import { getDefaultStoreLogo } from "@/utilities/mediaResolver";
-import ButtonSpinnerLoader from "@/GlobalComponents/useCommon/ButtonSpinnerLoader";
+import ButtonSpinnerLoader from "@/GlobalComponents/Shared/Common/ButtonSpinnerLoader";
 
 const ForgotPasswordModal = ({
   isForgotPasswordModal,
   setIsForgotPasswordModal,
   setIsSigninModal,
+  logo,
 }) => {
   const {
     value,
@@ -46,8 +47,8 @@ const ForgotPasswordModal = ({
   });
 
   return (
-     <Transition show={isForgotPasswordModal} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={() => {}}>
+    <Transition show={isForgotPasswordModal} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={() => { }}>
         <TransitionChild
           as={Fragment}
           enter="transition-opacity duration-300"
@@ -98,15 +99,25 @@ const ForgotPasswordModal = ({
 
               <div className="overflow-auto grow max-md:p-4 text-center shadow-xl p-[40px_24px] rounded-xl w-full max-w-md align-middle transition-all transform">
                 <div className="flex justify-center mb-6">
-                  <img
-                    src={Logosrc || getDefaultStoreLogo()}
-                    alt="Logo"
-                    className="h-12 max-w-[200px] object-contain"
-                    onError={({ currentTarget }) => {
-                      currentTarget.onerror = null;
-                      currentTarget.src = getDefaultStoreLogo();
-                    }}
-                  />
+                  {logo ? (
+                    logo
+                  ) : Logosrc && !Logosrc.includes("/platforms/") ? (
+                    <img
+                      src={Logosrc}
+                      alt="Logo"
+                      className="h-12 max-w-[200px] object-contain"
+                      onError={({ currentTarget }) => {
+                        currentTarget.onerror = null;
+                        currentTarget.src = "/img/spurt-logo.svg";
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src="/img/spurt-logo.svg"
+                      alt="Logo"
+                      className="h-12 max-w-[200px] object-contain"
+                    />
+                  )}
                 </div>
 
                 <div>

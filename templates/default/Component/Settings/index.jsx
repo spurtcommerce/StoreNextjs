@@ -1,5 +1,5 @@
 "use client";
-import { useAddons } from "@/GlobalComponents/useCommon/AddonProvider";
+import { useGlobalProvider } from "@/GlobalComponents/Shared/Common";
 import { useTranslations } from "next-intl";
 import { isRouteSupported } from "@/config/adapterRoutes";
 
@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import SettingsSkeleton from "./settingSkeletonLoader";
 const SettingsComponent = () => {
-  const { Permission, loading, addons } = useAddons();
+  const { Permission, loading, addons } = useGlobalProvider() || {};
   const t = useTranslations();
 
   const tabs = [

@@ -1,11 +1,12 @@
-import { getHeaderData } from '@/GlobalComponents/useHeaders/useHeaderDataServer';
+import { getHeaderData } from '@/GlobalComponents/Hooks/useHeaders/useHeaderDataServer';
 import dynamic from 'next/dynamic';
 
-const HeaderClient = dynamic(()=>import('./HeaderClient'), {ssr:true}) 
+const HeaderClient = dynamic(() => import('./HeaderClient'), { ssr: true })
 
-const Header = async ({ storeSettings }) => {
-  const { token, allProductsList,languageList } = await getHeaderData(storeSettings);
-  
+const Header = async ({ storeSettings, token: propToken }) => {
+  const { token: fetchedToken, allProductsList, languageList } = await getHeaderData(storeSettings);
+  const token = propToken || fetchedToken;
+
   return (
     <HeaderClient
       storeSettings={storeSettings}

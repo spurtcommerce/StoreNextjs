@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[955],{70955:(t,e,n)=>{n.d(e,{M:()=>c,getProductListAdapter:()=>u});var r=n(358);function u(){return(0,r.getAdapterInstance)("product")}function c(){return(0,r.getAdapterInstance)("productDetail")}}}]);

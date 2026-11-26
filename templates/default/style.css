@@ -1,6 +1,55 @@
 @reference "../../src/app/globals.css";
 
 /* Default Spurtcommerce theme styles */
-:root {
-  --primary-color: #027600;
+:root,
+[data-theme="default"],
+[data-store="default"] {
+  --primary-color: #228B22;
+  --color: #228B22;
+  --btn-bg: #228B22;
+  --btn-bg-hover: #1c721c;
+  --btn-text: #FFFFFF;
+  --btn-border: #228B22;
+  --btn-secondary-bg: #EAF4EA;
+  --btn-secondary-text: #175e17;
+  --link-color: #228B22;
+  --link-hover-color: #1c721c;
+}
+
+/* Product Compare Table Styles */
+.compare-tbl {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.compare-tbl td,
+.compare-tbl th {
+  border-color: #e5e7eb;
+}
+
+.border-grey {
+  border-color: #e5e7eb;
+}
+
+.bg-lightblue {
+  background-color: #f3f8fd;
+}
+
+.text-boldblack {
+  color: #161d25;
+}
+
+.text-black-300 {
+  color: #4b5563;
+}
+
+.cancel-btn-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.v-s {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
 }

@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { ChevronRight, Search, ArrowUpDown } from "lucide-react";
-import ProductCard from "@/GlobalComponents/useProductCard";
+import ProductCard from "./Component/ProductCard/Index";
 import { getReplacedHTMLValue } from "@/utilities/commonFunctions";
 import { PriceCalculate } from "@/utilities/PriceCalculate";
 
@@ -45,8 +45,8 @@ const WidgetListPage = ({ token, storeSettings, widget, slug }) => {
     widget?.widgetLongTitle ||
     (slug
       ? String(slug)
-          .replace(/[-_]/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase())
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase())
       : "Widget Products");
 
   const description =
@@ -177,7 +177,7 @@ const WidgetListPage = ({ token, storeSettings, widget, slug }) => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
             {filteredProducts.map((item, index) => (
               <ProductCard
-                key={item?.productId || item?.id || index}
+                key={`${item?.productId || item?.id || "product"}-${index}`}
                 token={token}
                 rawProduct={item}
                 trigger={trigger}

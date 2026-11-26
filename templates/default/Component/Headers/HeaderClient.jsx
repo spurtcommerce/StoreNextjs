@@ -1,31 +1,31 @@
 "use client";
-import CustomNextImage from "@/GlobalComponents/useCustomNextImage";
-import HeaderFunctions from "@/GlobalComponents/useHeaders/useHeaderFunctions";
+import CustomNextImage from "@/GlobalComponents/Shared/Common/CustomNextImage";
+import HeaderFunctions from "@/GlobalComponents/Hooks/useHeaders/useHeaderFunctions";
 import { resolveStoreLogo, getDefaultStoreLogo } from "@/utilities/mediaResolver";
 import { isValue } from "@/utilities/helper";
 import Link from "next/link";
 import SignInModal from "../SignIn/Index";
 import ForgotPasswordModal from "../ForgotPassword/Index";
 import SignUpModal from "../SignUp/Index";
-import LanguageList from "@/GlobalComponents/useLanguageList";
-import MyProfileDropdown from "@/GlobalComponents/useMyProfileDropdown";
-import MyAccount from "@/GlobalComponents/useMyAccount";
+import LanguageList from "@/GlobalComponents/Hooks/useLanguageList";
+import MyProfileDropdown from "@/GlobalComponents/Hooks/useUser/useMyProfileDropdown";
+import MyAccount from "@/GlobalComponents/Hooks/useUser/useMyAccount";
 import ChangePasswordModal from "../ChangePassword/Index";
-import MobileViewMenu from "@/GlobalComponents/useMobileViewMenu";
-import UseProductSearchFun from "@/GlobalComponents/useProductSearchFunc";
+import MobileViewMenu from "@/GlobalComponents/Hooks/useMobileViewMenu";
+import UseProductSearchFun from "@/GlobalComponents/Hooks/useProduct/useProductSearch";
 import URLTokenLogin from "../URLTokenLogin";
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import SearchProductsDropdown from "@/GlobalComponents/Reused/SearchProductsDropdown";
-import { useAddons } from "@/GlobalComponents/useCommon/AddonProvider";
-import TopCategory from "@/GlobalComponents/TopCategories";
+import { useGlobalProvider } from "@/GlobalComponents/Shared/Common";
+import TopCategory from "@/GlobalComponents/Features/TopCategories";
 import CommonButton from "@/GlobalComponents/Reused/CommonButton";
-import HoverTooltip from "@/GlobalComponents/useCommon/HoverTooltip";
+import HoverTooltip from "@/GlobalComponents/Shared/Common/HoverTooltip";
 import IconButton from "@/GlobalComponents/Reused/IconButton";
-import CheckoutHeader from "@/GlobalComponents/Checkout/CheckoutHeader";
-import ThemeToggle from "@/GlobalComponents/ThemeToggle";
-import { wishiListApiCount } from "@/api/cartApi";
+import CheckoutHeader from "@/GlobalComponents/Core/Checkout/CheckoutComponent/CheckoutHeader";
+import { wishiListApiCount, wishiListTotalCountApi } from "@/api/cartApi";
+import { getClientAuthToken, getValidAuthToken } from "@/utilities/tokenHelper";
 const HeaderClient = ({
   storeSettings,
   token,
@@ -65,14 +65,107 @@ const HeaderClient = ({
   });
 
   const router = useRouter();
-  const activeToken = token || UpdatedToken;
+  const [mounted, setMounted] = useState(false);
+  const [clientToken, setClientToken] = useState("");
+
+  const readClientToken = useCallback(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      const raw = getClientAuthToken();
+      const valid = getValidAuthToken(raw);
+      if (!valid && raw) {
+        try {
+          [
+            "BearerToken",
+            "token",
+            "medusa_auth_token",
+            "opencart_auth_token",
+            "customer_auth_token",
+            "spurt_token",
+            "woocommerce_auth_token",
+            "customerProfile",
+            "customerUser",
+            "customer_avatar",
+            "customer_avatar_path",
+          ].forEach((k) => localStorage.removeItem(k));
+        } catch (_) {}
+      }
+      return valid || "";
+    } catch (_) {
+      return "";
+    }
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    setClientToken(readClientToken());
+
+    const handleSync = () => {
+      setClientToken(readClientToken());
+    };
+    const handleLogout = () => {
+      setClientToken("");
+    };
+
+    window.addEventListener("storage", handleSync);
+    window.addEventListener("user_logged_out", handleLogout);
+    window.addEventListener("customer_logged_out", handleLogout);
+
+    return () => {
+      window.removeEventListener("storage", handleSync);
+      window.removeEventListener("user_logged_out", handleLogout);
+      window.removeEventListener("customer_logged_out", handleLogout);
+    };
+  }, [readClientToken]);
+
+  useEffect(() => {
+    if (UpdatedToken !== undefined) {
+      if (!UpdatedToken) {
+        setClientToken("");
+      } else {
+        setClientToken(getValidAuthToken(UpdatedToken));
+      }
+    }
+  }, [UpdatedToken]);
+
+  const activeToken = mounted
+    ? getValidAuthToken(
+        UpdatedToken !== "" && UpdatedToken !== null && UpdatedToken !== undefined
+          ? UpdatedToken
+          : clientToken
+      )
+    : getValidAuthToken(token || "");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("auth_required") === "1" && !activeToken) {
+      setIsSigninModal(true);
+      if (window.history?.replaceState) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("auth_required");
+        window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+      }
+    }
+  }, [activeToken, setIsSigninModal]);
   const dispatch = useDispatch();
+
+  const fetchedWishlistTokenRef = useRef(null);
 
   useEffect(() => {
     if (activeToken) {
-      wishiListApiCount(() => {}, dispatch);
+      if (fetchedWishlistTokenRef.current === activeToken) return;
+      fetchedWishlistTokenRef.current = activeToken;
+      wishiListTotalCountApi(() => { }, dispatch);
+    } else {
+      fetchedWishlistTokenRef.current = null;
+      if (typeof window !== "undefined" && !clientToken) {
+        localStorage.removeItem("medusa_wishlist_ids");
+        localStorage.removeItem("wishlist_product_ids");
+        window.dispatchEvent(new Event("medusa_wishlist_updated"));
+      }
     }
-  }, [activeToken, dispatch]);
+  }, [activeToken, clientToken, dispatch]);
 
   const selectedLanguageReduxState = useSelector(
     (state) => state.storeReducer.selectedLanguageRedux,
@@ -87,7 +180,7 @@ const HeaderClient = ({
     router?.push(`/products/${product?.productSlug}`);
     setIsProductSearchModal(false);
   };
-  const { Permission, addons } = useAddons();
+  const { Permission } = useGlobalProvider();
 
   const wishCount = useSelector((state) => state.storeReducer.wishCount);
   const CartData = useSelector((state) => state.storeReducer.cardpopCount);
@@ -99,8 +192,14 @@ const HeaderClient = ({
       icon: "/img/heART.svg",
       alt: "heart",
       label: t("wishList"),
-      href: activeToken ? "/settings/wishlist" : "/",
-      onClick: !activeToken ? () => setIsSigninModal(true) : undefined,
+      href: activeToken ? "/settings/wishlist" : undefined,
+      onClick: (e) => {
+        if (!activeToken) {
+          e?.preventDefault?.();
+          e?.stopPropagation?.();
+          setIsSigninModal(true);
+        }
+      },
       count: activeToken ? wishCount : 0,
       show: true,
     },
@@ -115,8 +214,19 @@ const HeaderClient = ({
     },
   ].filter((item) => item.show);
 
-  if (["/checkout", "/cart", "/choose-address", "/payment", "/stock-checkout"].includes(pathname)) {
-    return <CheckoutHeader storeSettings={storeSettings} />;
+  const directPathname = usePathname();
+  const activePath = pathname || directPathname || "";
+
+  const isCheckoutStepperRoute = [
+    "/checkout",
+    "/cart",
+    "/choose-address",
+    "/payment",
+    "/stock-checkout",
+  ].some((r) => activePath === r || activePath.startsWith(`${r}/`));
+
+  if (pathname?.startsWith("/manage")) {
+    return null;
   }
 
   return (
@@ -138,12 +248,12 @@ const HeaderClient = ({
 
               <Link href="/" className="flex items-center">
                 <img
-                  src={resolveStoreLogo(storeSettings) || getDefaultStoreLogo()}
-                  alt={storeSettings?.[0]?.storeName ?? "Logo"}
+                  src="/img/spurt-logo.svg"
+                  alt={storeSettings?.[0]?.storeName ?? "Spurtcommerce"}
                   className="max-h-[52px] max-w-[150px] object-contain"
                   onError={({ currentTarget }) => {
                     currentTarget.onerror = null;
-                    currentTarget.src = getDefaultStoreLogo();
+                    currentTarget.src = "/img/spurt-logo.svg";
                   }}
                 />
               </Link>
@@ -160,9 +270,6 @@ const HeaderClient = ({
             <div className="flex items-center space-x-[16px] md:space-x-[20px]">
               {/* language select box */}
               <LanguageList languageList={languageList} />
-
-              {/* Dark / Light theme toggle */}
-              <ThemeToggle className="hover:bg-black/5 dark:hover:bg-white/10" />
 
               <div className="flex flex-1 items-center justify-between gap-0">
                 {headerIcons.map((item) => (
@@ -224,6 +331,13 @@ const HeaderClient = ({
               }
               token={activeToken}
               storeSettings={storeSettings}
+              logo={
+                <img
+                  src="/img/spurt-logo.svg"
+                  alt="Spurtcommerce"
+                  className="h-12 max-w-[200px] object-contain"
+                />
+              }
             />
             <SignUpModal
               isSignupModal={isSignupModal}
@@ -234,16 +348,37 @@ const HeaderClient = ({
               }
               token={activeToken}
               storeSettings={storeSettings}
+              logo={
+                <img
+                  src="/img/spurt-logo.svg"
+                  alt="Spurtcommerce"
+                  className="h-12 max-w-[200px] object-contain"
+                />
+              }
             />
-                        <ForgotPasswordModal
+            <ForgotPasswordModal
               isForgotPasswordModal={isForgotPasswordModal}
               setIsForgotPasswordModal={setIsForgotPasswordModal}
               setIsSigninModal={setIsSigninModal}
+              logo={
+                <img
+                  src="/img/spurt-logo.svg"
+                  alt="Spurtcommerce"
+                  className="h-12 max-w-[200px] object-contain"
+                />
+              }
             />
-                        <ChangePasswordModal
+            <ChangePasswordModal
               isChangePasswordModal={isChangePasswordModal}
               setIsChangePasswordModal={setIsChangePasswordModal}
               setIsMyAccountModal={setIsMyAccountModal}
+              logo={
+                <img
+                  src="/img/spurt-logo.svg"
+                  alt="Spurtcommerce"
+                  className="h-12 max-w-[200px] object-contain"
+                />
+              }
             />
             <MobileViewMenu
               menuOpen={menuOpen}
@@ -265,6 +400,9 @@ const HeaderClient = ({
 
         <TopCategory />
       </section>
+      {isCheckoutStepperRoute && (
+        <CheckoutHeader storeSettings={storeSettings} stepperOnly />
+      )}
     </>
   );
 };

@@ -1,5 +1,5 @@
 // Component
-import CustomCurrencyFormatter from "@/GlobalComponents/useCommon/CustomCurrencyFormatter";
+import CustomCurrencyFormatter from "@/GlobalComponents/Shared/Common/CustomCurrencyFormatter";
 import {
   DiscountPercentCalculate,
   PriceCalculate,

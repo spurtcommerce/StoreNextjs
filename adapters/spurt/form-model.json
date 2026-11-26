@@ -1,0 +1,39 @@
+{
+  "endpointField": "spurtEndpoint",
+  "fields": [
+    {
+      "name": "spurtEndpoint",
+      "label": "Backend API endpoint",
+      "type": "url",
+      "inputMode": "url",
+      "required": true,
+      "placeholder": "https://dev-api.spurtb2c.store/api/",
+      "aliases": ["storeUrl"],
+      "syncKeys": ["storeUrl"],
+      "isEndpoint": true
+    },
+    {
+      "name": "industryName",
+      "label": "Industry name",
+      "type": "text",
+      "required": true,
+      "placeholder": "e.g. Electronics",
+      "aliases": ["industry"],
+      "syncKeys": ["industry"],
+      "payloadKey": "industry"
+    },
+    {
+      "name": "appId",
+      "label": "App ID",
+      "type": "password",
+      "required": true,
+      "secret": true,
+      "secretStatusKey": "hasSpurtAppId",
+      "secretKey": "spurtAppId",
+      "autoComplete": "new-password",
+      "placeholder": "e.g. sp_xxxxxxxxxxxxxxxxxxxx",
+      "configuredPlaceholder": "Configured on server — leave blank to keep existing",
+      "localStorageKey": "appId"
+    }
+  ]
+}

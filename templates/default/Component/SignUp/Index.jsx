@@ -1,5 +1,5 @@
 "use client";
-import useSignupModalFunc from "@/GlobalComponents/useSignupModalFunc";
+import { useSignupModal } from "@/GlobalComponents/Hooks/useAuth";
 import React, { Fragment } from "react";
 import dynamic from "next/dynamic";
 
@@ -12,9 +12,9 @@ const DialogTitle = loadHeadlessui("DialogTitle");
 const Transition = loadHeadlessui("Transition");
 const TransitionChild = loadHeadlessui("TransitionChild");
 
-import FormInput from "@/GlobalComponents/FormInput";
+import { FormInput } from "@/GlobalComponents/Shared/Forms";
 import { getDefaultStoreLogo } from "@/utilities/mediaResolver";
-import ButtonSpinnerLoader from "@/GlobalComponents/useCommon/ButtonSpinnerLoader";
+import { ButtonSpinnerLoader } from "@/GlobalComponents/Shared/Common";
 import CommonButton from "@/GlobalComponents/Reused/CommonButton";
 import CommonLink from "@/GlobalComponents/Reused/CommonLink";
 const SignUpModal = ({
@@ -24,12 +24,19 @@ const SignUpModal = ({
   setIsChangeForgotPasswordModalFunc,
   token,
   storeSettings,
+  logo,
 }) => {
   const {
     value,
     errorType,
     isOtpSent,
     isStandardAuth,
+    isOpenCart,
+    requiresPhone,
+    requiresLastName,
+    requiresConfirmPassword,
+    requiresAgree,
+    requiresNewsletter,
     handleInputChange,
     handleInputBlur,
     handleInputKeyUp,
@@ -43,7 +50,7 @@ const SignUpModal = ({
     t,
     ArabicLang,
     Logosrc,
-  } = useSignupModalFunc({
+  } = useSignupModal({
     isSignupModal,
     setIsSigninModal,
     setIsSignupModal,
@@ -53,7 +60,7 @@ const SignUpModal = ({
   return (
     <>
       <Transition show={isSignupModal} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => {}}>
+        <Dialog as="div" className="relative z-50" onClose={() => { }}>
           {/* Backdrop */}
           <TransitionChild
             as={Fragment}
@@ -95,15 +102,25 @@ const SignUpModal = ({
                 {/* p-[40px_24px] */}
                 <div className="w-full max-w-md grow transform overflow-auto rounded-xl p-[24px_24px] text-center align-middle shadow-xl transition-all max-md:p-4">
                   <div className="mb-6 flex justify-center">
-                    <img
-                      src={Logosrc || getDefaultStoreLogo()}
-                      alt="Logo"
-                      className="h-12 max-w-[200px] object-contain"
-                      onError={({ currentTarget }) => {
-                        currentTarget.onerror = null;
-                        currentTarget.src = getDefaultStoreLogo();
-                      }}
-                    />
+                    {logo ? (
+                      logo
+                    ) : Logosrc && !Logosrc.includes("/platforms/") ? (
+                      <img
+                        src={Logosrc}
+                        alt="Logo"
+                        className="h-12 max-w-[200px] object-contain"
+                        onError={({ currentTarget }) => {
+                          currentTarget.onerror = null;
+                          currentTarget.src = "/img/spurt-logo.svg";
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src="/img/spurt-logo.svg"
+                        alt="Logo"
+                        className="h-12 max-w-[200px] object-contain"
+                      />
+                    )}
                   </div>
 
                   {/* Heading  */}
@@ -130,9 +147,8 @@ const SignUpModal = ({
                         onChange={handleInputChange}
                         onBlur={handleEmailBlur}
                         onKeyUp={handleEmailKeyUp}
-                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${
-                          errorType?.email != 0 ? "mb-6!" : ""
-                        }`}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.email != 0 ? "mb-6!" : ""
+                          }`}
                         errorType={errorType?.email}
                         errorMessages={{
                           1: t("emailRequired"),
@@ -154,9 +170,8 @@ const SignUpModal = ({
                           onChange={handleInputChange}
                           onBlur={handleEmailBlur}
                           onKeyUp={handleEmailKeyUp}
-                          className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${
-                            errorType?.email != 0 ? "mb-6!" : ""
-                          }`}
+                          className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.email != 0 ? "mb-6!" : ""
+                            }`}
                           errorType={errorType?.email}
                           errorMessages={{
                             1: t("emailRequired"),
@@ -176,7 +191,7 @@ const SignUpModal = ({
                           className="h-[46px] w-full"
                         >
                           {isSendOtpLoading ? (
-                            <ButtonSpinnerLoader />
+                            ""
                           ) : isOtpSent ? (
                             <>{t("resendOtp")}</>
                           ) : (
@@ -199,9 +214,8 @@ const SignUpModal = ({
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
                         onKeyUp={handleInputKeyUp}
-                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${
-                          errorType?.otp != 0 ? "mb-6!" : ""
-                        }`}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.otp != 0 ? "mb-6!" : ""
+                          }`}
                         errorType={errorType?.otp}
                         errorMessages={{
                           1: <>{t("otpRequired")}</>,
@@ -224,9 +238,8 @@ const SignUpModal = ({
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
                         onKeyUp={handleInputKeyUp}
-                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${
-                          errorType?.firstName != 0 ? "mb-6!" : ""
-                        }`}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.firstName != 0 ? "mb-6!" : ""
+                          }`}
                         errorType={errorType?.firstName}
                         errorMessages={{
                           1: <>{t("firstNameRequired")}</>,
@@ -237,15 +250,42 @@ const SignUpModal = ({
                       <FormInput
                         name={"lastName"}
                         type={"text"}
-                        placeholder={t("LastNamePlaceholder")}
+                        placeholder={t("LastNamePlaceholder") || "Last Name"}
                         autoComplete="family-name"
                         maxLength={32}
                         value={value?.lastName}
                         onChange={handleInputChange}
+                        onBlur={handleInputBlur}
                         onKeyUp={handleInputKeyUp}
-                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none`}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.lastName != 0 ? "mb-6!" : ""
+                          }`}
+                        errorType={errorType?.lastName}
+                        errorMessages={{
+                          1: "Last name is required",
+                        }}
                       />
                     </div>
+
+                    {/* Phone / Telephone Input */}
+                    {requiresPhone && (
+                      <FormInput
+                        name={"phone"}
+                        type={"tel"}
+                        placeholder={"Telephone / Phone Number"}
+                        autoComplete="tel"
+                        maxLength={32}
+                        value={value?.phone}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        onKeyUp={handleInputKeyUp}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.phone != 0 ? "mb-6!" : ""
+                          }`}
+                        errorType={errorType?.phone}
+                        errorMessages={{
+                          1: "Telephone is required",
+                        }}
+                      />
+                    )}
 
                     {/* Company Name input */}
                     {!isStandardAuth && (
@@ -259,9 +299,8 @@ const SignUpModal = ({
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
                         onKeyUp={handleInputKeyUp}
-                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${
-                          errorType?.companyName != 0 ? "mb-6!" : ""
-                        }`}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.companyName != 0 ? "mb-6!" : ""
+                          }`}
                         errorType={errorType?.companyName}
                         errorMessages={{
                           1: <>{t("companyNameRequired")}</>,
@@ -294,19 +333,88 @@ const SignUpModal = ({
                       onChange={handleInputChange}
                       onBlur={handleInputBlur}
                       onKeyUp={handleInputKeyUp}
-                      className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${
-                        errorType?.password == 2
+                      className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.password == 2
                           ? "mb-10!"
                           : errorType?.password != 0
                             ? "mb-6!"
                             : ""
-                      }`}
+                        }`}
                       errorType={errorType?.password}
                       errorMessages={{
                         1: t("passwordRequired"),
-                        2: t("passwordRequirements"),
+                        2: isOpenCart ? "Password must be at least 6 characters" : t("passwordRequirements"),
                       }}
                     />
+
+                    {/* Confirm Password input */}
+                    {requiresConfirmPassword && (
+                      <FormInput
+                        name={"confirmPassword"}
+                        type={"password"}
+                        placeholder={"Confirm Password"}
+                        autoComplete="new-password"
+                        maxLength={128}
+                        value={value?.confirmPassword}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        onKeyUp={handleInputKeyUp}
+                        className={`mb-4 h-[46px] w-full rounded-[5px] border border-[var(--color-gray-300)] px-2 text-sm focus:border-[var(--color-gray-300)] focus:ring-0 focus:outline-none ${errorType?.confirmPassword != 0 ? "mb-6!" : ""
+                          }`}
+                        errorType={errorType?.confirmPassword}
+                        errorMessages={{
+                          1: "Please confirm your password",
+                          2: "Password confirmation does not match password",
+                        }}
+                      />
+                    )}
+
+                    {/* Newsletter Subscription */}
+                    {requiresNewsletter && (
+                      <div className="mb-3 flex items-center gap-2 text-left">
+                        <input
+                          id="signup-newsletter"
+                          name="newsletter"
+                          type="checkbox"
+                          checked={Boolean(value?.newsletter)}
+                          onChange={handleInputChange}
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                        />
+                        <label htmlFor="signup-newsletter" className="text-xs text-[var(--color-gray-700)] cursor-pointer select-none">
+                          Subscribe to newsletter
+                        </label>
+                      </div>
+                    )}
+
+                    {/* Privacy Policy Agreement */}
+                    {requiresAgree && (
+                      <div className="mb-4 text-left">
+                        <div className="flex items-center gap-2">
+                          <input
+                            id="signup-agree"
+                            name="agree"
+                            type="checkbox"
+                            checked={Boolean(value?.agree)}
+                            onChange={handleInputChange}
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                          />
+                          <div className="flex flex-wrap items-center gap-1 text-xs text-[var(--color-gray-700)] select-none">
+                            <label htmlFor="signup-agree" className="cursor-pointer">
+                              I have read and agree to the
+                            </label>
+                            <CommonLink
+                              href="/privacy-policy"
+                              onClick={() => handleCloseSignupModal?.()}
+                              className="font-semibold text-primary underline"
+                            >
+                              Privacy Policy
+                            </CommonLink>
+                          </div>
+                        </div>
+                        {errorType?.agree !== 0 && (
+                          <p className="mt-1 text-xs text-red-500">You must agree to the Privacy Policy</p>
+                        )}
+                      </div>
+                    )}
 
                     {/* Continue/Submit button */}
                     <CommonButton
@@ -319,7 +427,7 @@ const SignUpModal = ({
                       className="mt-2 h-[46px]"
                     >
                       {isSubmitLoading ? (
-                        <ButtonSpinnerLoader />
+                        ""
                       ) : (
                         <>{t("continueButton")}</>
                       )}

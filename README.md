@@ -27,16 +27,49 @@
 >
 > This documentation explains how to install, configure, run, and deploy the StoreNextjs v1.0 storefront powered by a pluggable Commerce Adapter layer (supporting SpurtCommerce and Medusa v2 backends) and dynamic runtime templates.
 
----
+
 
 # StoreNextjs - Multi-Commerce Storefront
 
 A modern, enterprise-grade e-commerce storefront built with **Next.js 16**, **React 19**, and **Tailwind CSS**. This project features a flexible adapter architecture that supports multiple commerce backends, allowing you to switch between different e-commerce platforms seamlessly.
 
-## Features
+### Features
+### 🔧 Adapter Comparison
+
+This project supports four commerce adapters, each with different capabilities:
+
+| Feature | Spurt Adapter |Woocommerce Adapter | Medusa Adapter | OpenCart Adapter | 
+|---------|---------------|--------------------|----------------|------------------|
+| **Authentication** | ✅ Yes |  ✅ Yes |✅ Yes | ✅ Yes |
+| **Order Management** | ✅ Yes |  ✅ Yes |✅ Yes | ✅ Yes |
+| **Address Management** | ✅ Yes |  ✅ Yes |✅ Yes | ✅ Yes |
+| **Payment Integration** | ✅ Yes |  ✅ Yes |✅ Yes | ✅ Yes |
+| **Category Management** | ✅ Yes |  ✅ Yes |✅ Yes | ✅ Yes |
+| **Product Variants** |✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes | 
+| **Cart Management** | ✅ Yes | ✅ Yes |✅ Yes | ✅ Yes | 
+| **Checkout** | ✅ Yes | ✅ Yes |✅ Yes | ✅ Yes | 
+| **Wishlist** | ✅ Yes |  ✅ Yes |✅ Yes | ✅ Yes |
+| **Product Reviews** | ✅ Yes |✅ Yes | ❌ No | ✅ Yes | 
+| **Related Products** | ✅ Yes | ✅ Yes | ❌ No | ✅ Yes |
+| **Product Specifications** | ✅ Yes |✅ Yes | ❌ No | ✅ Yes | 
+| **Banners** | ✅ Yes |  ✅ Yes |❌ No | ✅ Yes |
+
+
+### Spurt Adapter
+The **Spurt Adapter** provides a comprehensive e-commerce experience with advanced features like product reviews, specifications, related products, and support for digital downloads. It's ideal for businesses that need a feature-rich storefront.
+
+### Medusa Adapter
+The **Medusa Adapter** offers a streamlined e-commerce experience optimized for headless commerce. It focuses on core shopping functionalities with excellent performance and scalability through the Medusa backend.
+
+### OpenCart Adapter
+The **OpenCart Adapter** brings the flexibility of OpenCart to the StoreNextjs storefront. It supports a wide range of features including product reviews, digital downloads, and comprehensive category management. Ideal for businesses already using OpenCart as their backend.
+
+### Woocommerce Adapter
+The **Woocommerce Adapter** integrates the powerful Woocommerce platform with StoreNextjs. It provides full support for all major e-commerce features including product variants, reviews, related products, and seamless payment integration. Perfect for businesses built on the WordPress/Woocommerce ecosystem.
+
 
 ### Core Features
-- 🛒 **Multi-Adapter Architecture** - Support for multiple commerce backends (Medusa, Spurt)
+- 🛒 **Multi-Adapter Architecture** - Support for multiple commerce backends (Medusa, Spurt, OpenCart, Woocommerce)
 - 🌍 **Multi-Language Support** - Built-in i18n with support for 9 languages (English, Spanish, French, German, Italian, Japanese, Chinese, Hindi, Arabic)
 - 🎨 **Modern UI** - Built with Radix UI, Headless UI, and Material Tailwind components
 - 📱 **Responsive Design** - Mobile-first approach with Tailwind CSS
@@ -86,33 +119,6 @@ NEXT_PUBLIC_MANAGE_PASSWORD="your-secure-password"
 node server.js
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
-## 🔧 Adapter Comparison
-
-This project supports two commerce adapters, each with different capabilities:
-
-| Feature | Spurt Adapter | Medusa Adapter |
-|---------|---------------|----------------|
-| **Product Variants** | ✅ Yes | ✅ Yes |
-| **Product Reviews** | ✅ Yes | ❌ No |
-| **Related Products** | ✅ Yes | ❌ No |
-| **Product Specifications** | ✅ Yes | ❌ No |
-| **Digital Downloads** | ✅ Yes | ❌ No |
-| **Wishlist** | ✅ Yes | ✅ Yes |
-| **Banners** | ✅ Yes |  ❌ No |
-| **Cart Management** | ✅ Yes | ✅ Yes |
-| **Checkout** | ✅ Yes | ✅ Yes |
-| **Order Management** | ✅ Yes | ✅ Yes |
-| **Authentication** | ✅ Yes | ✅ Yes |
-| **Address Management** | ✅ Yes | ✅ Yes |
-| **Payment Integration** | ✅ Yes | ✅ Yes |
-| **Category Management** | ✅ Yes | ✅ Yes |
-
-### Spurt Adapter
-The **Spurt Adapter** provides a comprehensive e-commerce experience with advanced features like product reviews, specifications, related products, and support for digital downloads. It's ideal for businesses that need a feature-rich storefront.
-
-### Medusa Adapter
-The **Medusa Adapter** offers a streamlined e-commerce experience optimized for headless commerce. It focuses on core shopping functionalities with excellent performance and scalability through the Medusa backend.
 
 ## 🖼️ Adding Custom Image URLs
 
@@ -193,7 +199,9 @@ node server.js
 StoreNextjs/
 ├── adapters/           # Commerce adapter modules
 │   ├── medusa/        # Medusa adapter
-│   └── spurt/         # Spurt adapter
+│   ├── spurt/         # Spurt adapter
+│   ├── opencart/      # OpenCart adapter
+│   └── woocommerce/   # Woocommerce adapter
 ├── dist/              # Production build output
 ├── i18n/              # Internationalization configuration
 ├── messages/          # Translation files
@@ -247,8 +255,8 @@ Ensure the following environment variables are set in your production environmen
 ```env
 NEXT_PUBLIC_ENV=production
 NEXT_PUBLIC_IMAGE_URL=https://your-cdn.com/
-NEXT_PUBLIC_MANAGE_USERNAME=your-admin-username
-NEXT_PUBLIC_MANAGE_PASSWORD=your-secure-password
+MANAGE_USERNAME=your-admin-username
+MANAGE_PASSWORD=your-secure-password
 ```
 
 ## 🤝 Contributing
@@ -269,6 +277,24 @@ This project is private and proprietary.
 
 For issues, questions, or contributions, please open an issue on GitHub.
 
+
 ---
+
+## 📦 Release Notes
+
+### V1.0.1 (Current)
+
+**New Adapters**
+- Added **OpenCart Adapter** — brings OpenCart's flexibility to StoreNextjs with full feature support including product reviews, digital downloads, related products, specifications, banners, wishlist, cart management, checkout, order management, authentication, address management, payment integration, and category management.
+- Added **Woocommerce Adapter** — integrates the Woocommerce platform with StoreNextjs, providing full support for product variants, reviews, related products, specifications, digital downloads, banners, wishlist, cart management, checkout, order management, authentication, address management, payment integration, and category management.
+
+**Updated Comparison Table**
+- The adapter comparison table now includes four adapters: Spurt, Medusa, OpenCart, and Woocommerce.
+
+**Updated Project Structure**
+- Added `adapters/opencart/` and `adapters/woocommerce/` directories to the project structure.
+
+---
+
 
 **Built with ❤️ using Next.js and modern web technologies**
